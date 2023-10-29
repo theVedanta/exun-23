@@ -1,13 +1,17 @@
 "use client";
 
-import { Button } from "@radix-ui/themes";
-import { signIn } from "next-auth/react";
+import { Box } from "@radix-ui/themes";
+import Notes from "../components/Notes";
+import Canvas from "../components/Canvas";
 
 const Home = () => {
     return (
-        <div>
-            <Button onClick={() => signIn()}>Hello World</Button>
-        </div>
+        <Box
+            style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
+        >
+            <Notes />
+            <Canvas />
+        </Box>
     );
 };
 
