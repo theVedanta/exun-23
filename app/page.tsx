@@ -7,6 +7,7 @@ import db from "./db";
 import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 
+
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
 

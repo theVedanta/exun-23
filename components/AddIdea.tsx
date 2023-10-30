@@ -16,13 +16,15 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
         const name = (
             document.getElementById("idea-name") as HTMLInputElement
         ).value.trim();
-        const description = (
-            document.getElementById("idea-description") as HTMLInputElement
-        ).value.trim();
-
-        if (workspace && workspace.ideas) {
-            const ideas = [...workspace.ideas, { name, description }];
+        // const description = (
+        //     document.getElementById("idea-description") as HTMLInputElement
+        // ).value.trim();
+            
+        if (workspace ) {
+            const ideas = workspace.ideas ?  [...workspace.ideas, { name }] : [{name}];
             await updateDoc(doc(db, "workspaces", workspace.id), { ideas });
+        } else{ 
+            
         }
     };
 

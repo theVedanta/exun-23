@@ -20,3 +20,8 @@ interface User {
     name: string;
     image: string;
 }
+
+interface User {
+    name: string;
+    email:string;
+}
