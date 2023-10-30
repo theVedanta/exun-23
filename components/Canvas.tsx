@@ -41,7 +41,7 @@ const Canvas = ({ workspace }: { workspace: Workspace | undefined }) => {
                 this i the main agenda code-warriors.org
             </Circle>
 
-            <AddIdea />
+            <AddIdea workspace={workspace} />
         </motion.div>
     );
 };

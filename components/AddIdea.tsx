@@ -8,8 +8,24 @@ import {
     TextField,
 } from "@radix-ui/themes";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { doc, updateDoc } from "firebase/firestore";
+import db from "@/app/db";
 
-const AddIdea = () => {
+const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
+    const addIdea = async () => {
+        const name = (
+            document.getElementById("idea-name") as HTMLInputElement
+        ).value.trim();
+        const description = (
+            document.getElementById("idea-description") as HTMLInputElement
+        ).value.trim();
+
+        if (workspace && workspace.ideas) {
+            const ideas = [...workspace.ideas, { name, description }];
+            await updateDoc(doc(db, "workspaces", workspace.id), { ideas });
+        }
+    };
+
     return (
         <Dialog.Root>
             <Dialog.Trigger>
@@ -17,11 +33,12 @@ const AddIdea = () => {
                     style={{
                         position: "fixed",
                         bottom: "30px",
-                        cursor: "pointer",
+                        cursor: !workspace ? "not-allowed" : "pointer",
                     }}
                     size="4"
                     variant="soft"
                     color="gray"
+                    disabled={workspace === undefined}
                 >
                     <PlusIcon />
                 </IconButton>
@@ -35,13 +52,19 @@ const AddIdea = () => {
                         <Text as="div" size="2" mb="1" weight="bold">
                             Name
                         </Text>
-                        <TextField.Input placeholder="Name your idea..." />
+                        <TextField.Input
+                            id="idea-name"
+                            placeholder="Name your idea..."
+                        />
                     </label>
                     <label>
                         <Text as="div" size="2" mb="1" weight="bold">
                             Description
                         </Text>
-                        <TextArea placeholder="Enter some basic description..." />
+                        <TextArea
+                            id="idea-description"
+                            placeholder="Enter some basic description..."
+                        />
                     </label>
                 </Flex>
 
@@ -52,7 +75,7 @@ const AddIdea = () => {
                         </Button>
                     </Dialog.Close>
                     <Dialog.Close>
-                        <Button>Save</Button>
+                        <Button onClick={addIdea}>Save</Button>
                     </Dialog.Close>
                 </Flex>
             </Dialog.Content>
