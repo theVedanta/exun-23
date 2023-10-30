@@ -15,8 +15,6 @@ const AddIdea = () => {
             <Dialog.Trigger>
                 <IconButton
                     style={{
-                        position: "fixed",
-                        bottom: "30px",
                         cursor: "pointer",
                     }}
                     size="4"
