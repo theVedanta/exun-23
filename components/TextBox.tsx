@@ -37,7 +37,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 position: "absolute",
                 width: "400px",
                 minHeight: "300px",
-                background: "red",
+                background: "#eee",
                 border: "1px solid #ccc",
                 top: "60%",
                 left: "60%",
