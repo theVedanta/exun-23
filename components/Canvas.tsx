@@ -85,8 +85,12 @@ const Canvas = ({
                                       </Circle>
 
                                       <Xarrow
-                                          start={"agenda"} //can be react ref
+                                          start="agenda" //can be react ref
                                           end={values.name.split(" ").join("_")} //or an id
+                                          color="#6a80d9"
+                                          headSize={0}
+                                          strokeWidth={2}
+                                          curveness={0.4}
                                       />
                                   </>
                               );

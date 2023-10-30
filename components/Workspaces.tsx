@@ -37,9 +37,8 @@ const Workspaces = () => {
     return (
         <Dialog.Root>
             <DropdownMenu.Root>
-                <DropdownMenu.Trigger
-                >
-                    <Button variant="ghost" size="3">
+                <DropdownMenu.Trigger>
+                    <Button variant="soft" size="3">
                         Workspaces
                         <CaretDownIcon />
                     </Button>

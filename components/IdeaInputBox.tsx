@@ -31,14 +31,15 @@ const IdeaInputBox = ({ idea }: { idea: Idea }) => {
                     position: "absolute",
                     width: "400px",
                     maxHeight: "300px",
-                    background: "#eee",
-                    border: "1px solid #ccc",
+                    background: "#fff",
+                    border: "1px solid #ddd",
                     top: "60%",
                     left: "60%",
                     padding: "28px",
                     borderRadius: "10px",
                     cursor: "text",
                     overflow: "scroll",
+                    textAlign: "justify",
                 }}
             >
                 <Heading style={{ fontSize: "19px", fontWeight: "600" }}>

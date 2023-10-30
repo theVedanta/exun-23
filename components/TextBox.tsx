@@ -37,14 +37,15 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 position: "absolute",
                 width: "400px",
                 minHeight: "300px",
-                background: "#eee",
-                border: "1px solid #ccc",
+                background: "#fff",
+                border: "1px solid #ddd",
                 top: "60%",
                 left: "60%",
                 padding: "28px",
                 borderRadius: "10px",
                 cursor: "text",
                 fontSize: "1rem",
+                textAlign: "justify",
             }}
             onClick={() => {
                 setEditing(true);

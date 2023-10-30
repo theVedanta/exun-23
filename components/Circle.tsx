@@ -56,8 +56,8 @@ const Circle = ({
                     height: isAgenda ? "120px" : "80px",
                     borderRadius: "50%",
                     transition: "all 0.3s",
-                    background: "#eee",
-                    border: children ? "2px solid #0275d8" : "",
+                    background: "#eaeefe",
+                    border: children ? "2px solid #6a80d9" : "",
                     fontSize: isAgenda ? "20px" : "13px",
                     textAlign: "center",
                 }}
@@ -69,7 +69,8 @@ const Circle = ({
                 id={id}
                 ref={ref}
             >
-                {title}
+                {title.substring(0, 6)}
+                {title.length > 6 && "..."}
                 {hover &&
                     (type === "textarea" ? (
                         <TextBox
