@@ -4,68 +4,82 @@ import Circle from "./Circle";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import AddIdea from "./AddIdea";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Box, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 
-const createWorkspace = async (agenda: string, userEmail: string) => {
-    const dbref = doc(collection(db, "workspaces"));
-    localStorage.setItem("workspace", dbref.id);
-    await setDoc(dbref, {
-        agenda,
-        userEmail,
-    });
-};
-
-const Canvas = ({ workspace }: { workspace: Workspace | undefined }) => {
-    const [userEmail, setUserEmail] = useState("");
-    const { data: session, status } = useSession();
+const Canvas = ({
+    workspace,
+    setWorkspace,
+}: {
+    workspace: Workspace | undefined;
+    setWorkspace: any;
+}) => {
+    const [user, setUser] = useState<User>();
+    const constraintsRef = useRef(null);
+    const { data: session } = useSession();
 
     useEffect(() => {
-        if (session && session.user) {
-            setUserEmail(session.user.email);
-        }
-    }, []);
-    const constraintsRef = useRef(null);
+        session && session.user && setUser(session.user as User);
+    }, [session]);
 
-    const editAgenda = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (!workspace) {
-            createWorkspace(e.target.value.trim(), userEmail);
+    const createWorkspace = async (agenda: string, userEmail?: string) => {
+        // Creates a document reference with id to be assigned before adding to db
+        const workspaceRef = doc(collection(db, "workspaces"));
+        localStorage.setItem("workspace", workspaceRef.id);
+
+        await setDoc(workspaceRef, {
+            agenda,
+            user: userEmail ? userEmail : "",
+        });
+
+        const d = await getDoc(workspaceRef);
+        setWorkspace({ ...d.data(), id: d.id });
+    };
+
+    const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
+        const agenda = e.target.value.trim();
+
+        if (workspace === undefined) {
+            createWorkspace(agenda, user && user.email);
+        } else {
+            console.log(workspace);
+            await updateDoc(doc(db, "workspaces", workspace.id), {
+                agenda,
+            });
         }
     };
 
     return (
-        <>
-            <motion.div
-                style={{
-                    height: "100vh",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-                ref={constraintsRef}
+        <motion.div
+            style={{
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+            ref={constraintsRef}
+        >
+            <Circle
+                constraintsRef={constraintsRef}
+                title="Agenda"
+                onChange={(e) => editAgenda(e)}
+                type="textarea"
             >
-                <Circle
-                    constraintsRef={constraintsRef}
-                    title="Agenda"
-                    onChange={(e) => editAgenda(e)}
-                    type="textarea"
-                >
-                    this i the main agenda code-warriors.org
-                </Circle>
+                {workspace && workspace.agenda}
+            </Circle>
 
-                <Flex
-                    direction={"row"}
-                    gap={"5"}
-                    style={{ position: "fixed", bottom: "30px" }}
-                >
-                    <AddIdea workspace={workspace} />
-                    <Auth />
-                </Flex>
-            </motion.div>
-        </>
+            <Flex
+                gap="5"
+                direction="row"
+                style={{ position: "fixed", bottom: "30px" }}
+            >
+                <AddIdea workspace={workspace} />
+                <Auth />
+            </Flex>
+        </motion.div>
     );
 };
 

@@ -1,24 +1,37 @@
+"use client";
+
 import { Box } from "@radix-ui/themes";
 import Canvas from "../components/Canvas";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import db from "./db";
+import { useEffect, useState } from "react";
+import Workspaces from "@/components/Workspaces";
 
-// const getWorkspace = async (id: string | null) => {
-//     if (id) {
-//         const docSnap = await getDoc(doc(db, "workspaces", id));
-//         return docSnap.exists() ? (docSnap.data() as Workspace) : undefined;
-//     }
-// };
+const Home = () => {
+    const [workspace, setWorkspace] = useState<Workspace>();
 
-const Home = async () => {
-    // const id = localStorage.getItem("workspace-id");
-    // const workspace = await getWorkspace(id);
+    const getWorkspace = async (id: string | null) => {
+        if (id) {
+            onSnapshot(
+                doc(db, "workspaces", id),
+                (obj) =>
+                    obj.exists() &&
+                    setWorkspace({ ...obj.data(), id: obj.id } as Workspace)
+            );
+        }
+    };
+
+    useEffect(() => {
+        const id = localStorage.getItem("workspace");
+        getWorkspace(id);
+    }, []);
 
     return (
         <Box
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
-            <Canvas workspace={undefined} />
+            <Workspaces />
+            <Canvas workspace={workspace} setWorkspace={setWorkspace} />
         </Box>
     );
 };

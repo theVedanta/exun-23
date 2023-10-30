@@ -3,19 +3,15 @@ import { ChangeEvent, ReactNode, RefObject, useState } from "react";
 import { motion } from "framer-motion";
 import TextBox from "./TextBox";
 
-const Circle = ({
-    title,
-    children,
-    constraintsRef,
-    onChange,
-    type,
-}: {
+interface Props {
     title: string;
     constraintsRef: RefObject<Element>;
     children?: ReactNode;
     onChange: (e: ChangeEvent<HTMLTextAreaElement>) => any;
     type: "textarea" | "notes";
-}) => {
+}
+
+const Circle = ({ title, children, constraintsRef, onChange, type }: Props) => {
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
 
@@ -36,6 +32,7 @@ const Circle = ({
                     borderRadius: "50%",
                     transition: "all 0.3s",
                     background: "#eee",
+                    border: children ? "2px solid #0275d8" : "",
                 }}
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => {
@@ -53,7 +50,7 @@ const Circle = ({
                             editing={editing}
                         />
                     ) : (
-                        // ADD a NOTES Component here
+                        // ADD a NOTES Component here # ROSHAN
                         <></>
                     ))}
             </Flex>

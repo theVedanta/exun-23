@@ -3,12 +3,12 @@ interface Workspace {
     agenda: string;
     ideas?: Ideas[];
     notes?: Object;
+    user?: string;
 }
 
 interface Ideas {
     id: string;
     name: string;
-    description?: string;
     pros?: string[];
     cons?: string[];
     description?: Object;

@@ -31,8 +31,7 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
             <Dialog.Trigger>
                 <IconButton
                     style={{
-                        position: "fixed",
-                        bottom: "30px",
+                        margin: "5px",
                         cursor: !workspace ? "not-allowed" : "pointer",
                     }}
                     size="4"
