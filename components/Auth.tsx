@@ -30,7 +30,7 @@ const Auth = () => {
     if (session && session.user) {
         return (
             <IconButton
-                style={{ margin: "5px", cursor: "pointer" }}
+                style={{ cursor: "pointer" }}
                 size="4"
                 variant="soft"
                 color="gray"
@@ -47,7 +47,7 @@ const Auth = () => {
     return (
         <>
             <IconButton
-                style={{ margin: "5px", cursor: "pointer" }}
+                style={{ cursor: "pointer" }}
                 size="4"
                 variant="soft"
                 color="gray"

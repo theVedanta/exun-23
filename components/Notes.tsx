@@ -38,12 +38,13 @@ const Notes = () => {
                 width: "20%",
                 borderRight: "2px solid black",
                 overflowY: "scroll",
+                zIndex: 10,
             }}
         >
             <Heading>Notes</Heading>
             <hr />
 
-            <Box style={{ paddingTop: "30px" }} id="notes" ref={boxRef}></Box>
+            <Box style={{ paddingTop: "10px" }} id="notes" ref={boxRef}></Box>
         </Box>
     );
 };

@@ -9,6 +9,7 @@ import db from "@/app/db";
 import Auth from "./Auth";
 import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
+import createWorkspace from "@/utils";
 
 const Canvas = ({
     workspace,
@@ -25,25 +26,12 @@ const Canvas = ({
         session && session.user && setUser(session.user as User);
     }, [session]);
 
-    const createWorkspace = async (agenda: string, userEmail?: string) => {
-        // Creates a document reference with id to be assigned before adding to db
-        const workspaceRef = doc(collection(db, "workspaces"));
-        localStorage.setItem("workspace", workspaceRef.id);
-
-        await setDoc(workspaceRef, {
-            agenda,
-            user: userEmail ? userEmail : "",
-        });
-
-        const d = await getDoc(workspaceRef);
-        setWorkspace({ ...d.data(), id: d.id });
-    };
-
     const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const agenda = e.target.value.trim();
 
         if (workspace === undefined) {
-            createWorkspace(agenda, user && user.email);
+            const ws = await createWorkspace(agenda, user && user.email);
+            setWorkspace(ws);
         } else {
             console.log(workspace);
             await updateDoc(doc(db, "workspaces", workspace.id), {
@@ -72,7 +60,7 @@ const Canvas = ({
             </Circle>
 
             <Flex
-                gap="5"
+                gap="3"
                 direction="row"
                 style={{ position: "fixed", bottom: "30px" }}
             >
