@@ -1,12 +1,12 @@
 interface Workspace {
     id: string;
     agenda: string;
-    ideas?: Ideas[];
+    ideas?: Idea[];
     notes?: Object;
     user?: string;
 }
 
-interface Ideas {
+interface Idea {
     id: string;
     name: string;
     pros?: string[];
@@ -19,9 +19,4 @@ interface User {
     email: string;
     name: string;
     image: string;
-}
-
-interface User {
-    name: string;
-    email:string;
 }

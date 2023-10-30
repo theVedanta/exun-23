@@ -27,7 +27,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     onChange(eve);
-                }, 2000);
+                }, 1000);
             }}
             defaultValue={text && text}
         />
@@ -37,13 +37,14 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 position: "absolute",
                 width: "400px",
                 minHeight: "300px",
-                background: "#eee",
+                background: "red",
                 border: "1px solid #ccc",
                 top: "60%",
                 left: "60%",
                 padding: "28px",
                 borderRadius: "10px",
                 cursor: "text",
+                fontSize: "1rem",
             }}
             onClick={() => {
                 setEditing(true);

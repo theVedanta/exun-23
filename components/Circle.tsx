@@ -11,7 +11,7 @@ interface Props {
     children?: ReactNode;
     onChange: (e: ChangeEvent<HTMLTextAreaElement>) => any;
     type: "textarea" | "notes";
-    idea: Ideas | undefined;
+    idea: Idea | undefined;
     id: string;
     ref?: any;
     isAgenda?: Boolean;
@@ -33,51 +33,56 @@ const Circle = ({
     const updateXarrow = useXarrow();
 
     return (
-        <>
-            <motion.div
-                style={{ padding: "40px" }}
-                drag
-                dragConstraints={constraintsRef}
-                dragMomentum={false}
-                onDrag={updateXarrow}
-                onDragEnd={updateXarrow}
+        <motion.div
+            style={{ padding: "40px", zIndex: hover ? 12 : 5 }}
+            drag
+            dragConstraints={constraintsRef}
+            dragMomentum={false}
+            onDrag={() => {
+                updateXarrow();
+                setHover(false);
+            }}
+            onDragEnd={() => {
+                updateXarrow();
+                setHover(true);
+            }}
+        >
+            <Flex
+                position="relative"
+                justify="center"
+                align="center"
+                style={{
+                    width: isAgenda ? "120px" : "80px",
+                    height: isAgenda ? "120px" : "80px",
+                    borderRadius: "50%",
+                    transition: "all 0.3s",
+                    background: "#eee",
+                    border: children ? "2px solid #0275d8" : "",
+                    fontSize: isAgenda ? "20px" : "13px",
+                    textAlign: "center",
+                }}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => {
+                    setHover(false);
+                    setEditing(false);
+                }}
+                id={id}
+                ref={ref}
             >
-                <Flex
-                    position="relative"
-                    justify="center"
-                    align="center"
-                    style={{
-                        width: isAgenda ? "120px" : "80px",
-                        height: isAgenda ? "120px" : "80px",
-                        borderRadius: "50%",
-                        transition: "all 0.3s",
-                        background: "#eee",
-                        border: children ? "2px solid #0275d8" : "",
-                        fontSize: isAgenda ? "20px" : "13px",
-                    }}
-                    onMouseEnter={() => setHover(true)}
-                    onMouseLeave={() => {
-                        setHover(false);
-                        setEditing(false);
-                    }}
-                    id={id}
-                    ref={ref}
-                >
-                    {title}
-                    {hover &&
-                        (type === "textarea" ? (
-                            <TextBox
-                                onChange={onChange}
-                                setEditing={setEditing}
-                                text={children ? children.toString() : ""}
-                                editing={editing}
-                            />
-                        ) : (
-                            <IdeaInputBox idea={idea} />
-                        ))}
-                </Flex>
-            </motion.div>
-        </>
+                {title}
+                {hover &&
+                    (type === "textarea" ? (
+                        <TextBox
+                            onChange={onChange}
+                            setEditing={setEditing}
+                            text={children ? children.toString() : ""}
+                            editing={editing}
+                        />
+                    ) : (
+                        <IdeaInputBox idea={idea as Idea} />
+                    ))}
+            </Flex>
+        </motion.div>
     );
 };
 export default Circle;
