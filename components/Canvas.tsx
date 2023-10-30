@@ -1,11 +1,26 @@
-import Circle from "./Circle";
-import { useRef } from "react";
-import { motion } from "framer-motion";
-import { IconButton } from "@radix-ui/themes";
-import { PlusIcon } from "@radix-ui/react-icons";
+"use client";
 
-const Canvas = () => {
+import Circle from "./Circle";
+import { ChangeEvent, useRef } from "react";
+import { motion } from "framer-motion";
+import AddIdea from "./AddIdea";
+import { addDoc, collection } from "firebase/firestore";
+import db from "@/app/db";
+
+const createWorkspace = async (agenda: string) => {
+    await addDoc(collection(db, "workspaces"), {
+        agenda,
+    });
+};
+
+const Canvas = ({ workspace }: { workspace: Workspace | undefined }) => {
     const constraintsRef = useRef(null);
+
+    const editAgenda = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        if (!workspace) {
+            createWorkspace(e.target.value.trim());
+        }
+    };
 
     return (
         <motion.div
@@ -17,26 +32,16 @@ const Canvas = () => {
             }}
             ref={constraintsRef}
         >
-            <Circle constraintsRef={constraintsRef} title="Agenda">
-                coding in github.com
+            <Circle
+                constraintsRef={constraintsRef}
+                title="Agenda"
+                onChange={(e) => editAgenda(e)}
+            >
+                coding in github.com github.com github.com github.com github.com
             </Circle>
 
             <AddIdea />
         </motion.div>
-    );
-};
-
-const AddIdea = () => {
-    return (
-        <IconButton
-            style={{ position: "fixed", bottom: "30px", cursor: "pointer" }}
-            size="4"
-            variant="soft"
-            color="gray"
-            onClick={() => createIdea()}
-        >
-            <PlusIcon />
-        </IconButton>
     );
 };
 

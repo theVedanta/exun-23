@@ -7,17 +7,24 @@ import Header from "@editorjs/header";
 import CheckList from "@editorjs/checklist";
 // @ts-ignore
 import List from "@editorjs/list";
+import { useEffect, useRef } from "react";
 
 const Notes = () => {
-    new EditorJS({
-        holder: "notes",
-        tools: {
-            header: Header,
-            checklist: CheckList,
-            list: List,
-        },
-        placeholder: "Write your heart out...",
-    });
+    const boxRef = useRef(null);
+
+    useEffect(() => {
+        if (boxRef.current) {
+            new EditorJS({
+                holder: boxRef.current,
+                tools: {
+                    header: Header,
+                    checklist: CheckList,
+                    list: List,
+                },
+                placeholder: "Write your heart out...",
+            });
+        }
+    }, []);
 
     return (
         <Box
@@ -36,7 +43,7 @@ const Notes = () => {
             <Heading>Notes</Heading>
             <hr />
 
-            <Box style={{ paddingTop: "30px" }} id="notes"></Box>
+            <Box style={{ paddingTop: "30px" }} id="notes" ref={boxRef}></Box>
         </Box>
     );
 };

@@ -1,16 +1,24 @@
-"use client";
-
 import { Box } from "@radix-ui/themes";
-import Notes from "../components/Notes";
 import Canvas from "../components/Canvas";
+import { doc, getDoc } from "firebase/firestore";
+import db from "./db";
 
-const Home = () => {
+const getWorkspace = async (id: string | null) => {
+    if (id) {
+        const docSnap = await getDoc(doc(db, "workspaces", id));
+        return docSnap.exists() ? (docSnap.data() as Workspace) : undefined;
+    }
+};
+
+const Home = async () => {
+    const id = localStorage.getItem("workspace-id");
+    const workspace = await getWorkspace(id);
+
     return (
         <Box
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
-            <Notes />
-            <Canvas />
+            <Canvas workspace={workspace} />
         </Box>
     );
 };

@@ -1,19 +1,21 @@
-import { Box, Flex, TextArea, Button } from "@radix-ui/themes";
-import { ReactNode, RefObject, useRef, useState } from "react";
+import { Box, Flex, TextArea, Badge } from "@radix-ui/themes";
+import { ChangeEvent, ReactNode, RefObject, useState } from "react";
 import { motion } from "framer-motion";
 import linkifyHtml from "linkify-html";
 import ReactHtmlParser from "react-html-parser";
+import Link from "next/link";
 const linkify = require("linkifyjs");
 
 const Circle = ({
     title,
     children,
     constraintsRef,
-    ...props
+    onChange,
 }: {
     title: string;
     constraintsRef: RefObject<Element>;
     children?: ReactNode;
+    onChange: (e: ChangeEvent<HTMLTextAreaElement>) => any;
 }) => {
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -40,7 +42,6 @@ const Circle = ({
                     transition: "all 0.3s",
                     background: "#eee",
                 }}
-                {...props}
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => {
                     setHover(false);
@@ -62,6 +63,7 @@ const Circle = ({
                                 padding: "16px",
                                 borderRadius: "15px",
                             }}
+                            onChange={(eve) => onChange(eve)}
                             defaultValue={children?.toString()}
                         />
                     ) : (
@@ -69,12 +71,13 @@ const Circle = ({
                             style={{
                                 position: "absolute",
                                 width: "400px",
-                                minHeight: "200px",
-                                background: "#ddd",
+                                minHeight: "300px",
+                                background: "#eee",
+                                border: "1px solid #ccc",
                                 top: "60%",
                                 left: "60%",
                                 padding: "28px",
-                                borderRadius: "15px",
+                                borderRadius: "10px",
                                 cursor: "text",
                             }}
                             onClick={() => {
@@ -87,7 +90,7 @@ const Circle = ({
                                 <div
                                     style={{
                                         position: "absolute",
-                                        bottom: "22px",
+                                        bottom: "28px",
                                         width: "calc(100% - 64px)",
                                     }}
                                 >
@@ -101,20 +104,22 @@ const Circle = ({
                                         }}
                                     >
                                         {links.map((link: any, i: number) => (
-                                            <a
+                                            <Link
                                                 key={i}
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 href={link.href}
                                             >
-                                                <Button
+                                                <Badge
                                                     style={{
                                                         cursor: "pointer",
+                                                        marginRight: "10px",
                                                     }}
+                                                    variant="outline"
                                                 >
                                                     {link.value}
-                                                </Button>
-                                            </a>
+                                                </Badge>
+                                            </Link>
                                         ))}
                                     </div>
                                 </div>
