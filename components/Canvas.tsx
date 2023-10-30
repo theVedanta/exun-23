@@ -36,8 +36,9 @@ const Canvas = ({ workspace }: { workspace: Workspace | undefined }) => {
                 constraintsRef={constraintsRef}
                 title="Agenda"
                 onChange={(e) => editAgenda(e)}
+                type="textarea"
             >
-                coding in github.com github.com github.com github.com github.com
+                this i the main agenda code-warriors.org
             </Circle>
 
             <AddIdea />

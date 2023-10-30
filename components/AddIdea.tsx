@@ -28,10 +28,7 @@ const AddIdea = () => {
             </Dialog.Trigger>
 
             <Dialog.Content style={{ maxWidth: 450 }}>
-                <Dialog.Title>Edit profile</Dialog.Title>
-                <Dialog.Description size="2" mb="4">
-                    Make changes to your profile.
-                </Dialog.Description>
+                <Dialog.Title>Create awesomeness</Dialog.Title>
 
                 <Flex direction="column" gap="3">
                     <label>
@@ -44,7 +41,7 @@ const AddIdea = () => {
                         <Text as="div" size="2" mb="1" weight="bold">
                             Description
                         </Text>
-                        <TextArea placeholder="Enter some basic" />
+                        <TextArea placeholder="Enter some basic description..." />
                     </label>
                 </Flex>
 

@@ -6,8 +6,10 @@ interface Workspace {
 }
 
 interface Ideas {
-    text: string;
+    id: string;
+    name: string;
+    description?: string;
     pros?: string[];
     cons?: string[];
-    notes?: Object;
+    description?: Object;
 }
