@@ -7,6 +7,7 @@ import db from "./db";
 import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 
+
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
 
@@ -31,7 +32,7 @@ const Home = () => {
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
             <Workspaces />
-            <Canvas workspace={workspace} setWorkspace={setWorkspace} />
+            <Canvas workspace={workspace} setWorkspace={setWorkspace} /> 
         </Box>
     );
 };

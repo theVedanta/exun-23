@@ -13,3 +13,8 @@ interface Ideas {
     cons?: string[];
     description?: Object;
 }
+
+interface User {
+    name: string;
+    email:string;
+}
