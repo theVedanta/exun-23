@@ -58,15 +58,11 @@ export default function Editor({
             saveChanges();
           },
         });
+        
         setCreated(true);
 
       }
       
-      return  () => {
-        if (workspace&& holderRef.current && holderRef.current.destroy) {
-          holderRef.current.destroy();
-        }
-      };
 
   }, [holderRef, workspace]);
 
