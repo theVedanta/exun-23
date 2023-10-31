@@ -12,6 +12,8 @@ import { useSession } from "next-auth/react";
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
     const { data: session } = useSession();
+    console.log(workspace);
+    console.log("workspace in page");
 
     const getWorkspace = async (id: string | null) => {
         if (id) {
