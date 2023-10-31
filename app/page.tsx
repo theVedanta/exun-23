@@ -12,11 +12,13 @@ import { CopyIcon, Share1Icon } from "@radix-ui/react-icons";
 import { useClipboard } from "react-haiku";
 import CursorPresence from "@/components/CursorPresence";
 import { RoomProvider } from "@/liveblocks.config";
+import CustomToast from "@/components/Toast";
 
 const Home = () => {
 	const clipboard = useClipboard({ timeout: 2000 });
 	const [workspace, setWorkspace] = useState<Workspace>();
 	const { data: session } = useSession();
+	const [open, setOpen] = useState(false);
 
 	const getWorkspace = async (id: string | null) => {
 		if (id) {
@@ -77,16 +79,18 @@ const Home = () => {
 							size="3"
 							style={{ marginLeft: "20px" }}
 							variant="soft"
-							onClick={() =>
+							onClick={() => {
 								clipboard.copy(
 									`http://localhost:3000/${workspace?.id}`
-								)
-							}
+								);
+								setOpen(true);
+							}}
 						>
 							<Share1Icon />
 						</IconButton>
 					</Flex>
 				</Flex>
+				<CustomToast open={open} setOpen={setOpen} />
 			</Box>
 		</RoomProvider>
 	);
