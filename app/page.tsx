@@ -12,8 +12,7 @@ import { Share1Icon } from "@radix-ui/react-icons";
 import { useClipboard } from "react-haiku";
 import CursorPresence from "@/components/CursorPresence";
 import { RoomProvider } from "@/liveblocks.config";
-import CustomToast from "@/components/Toast";\
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import CustomToast from "@/components/Toast";
 
 
 const Home = () => {
@@ -21,7 +20,6 @@ const Home = () => {
   const [workspace, setWorkspace] = useState<Workspace>();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const [openAlert, setOpenAlert] = useState(false);
 
   const getWorkspace = async (id: string | null) => {
     if (id) {
@@ -91,40 +89,10 @@ const Home = () => {
             </IconButton>
           </Flex>
         </Flex>
-		<CustomDialog open={openAlert} setOpen={setOpenAlert} />
         <CustomToast open={open} setOpen={setOpen} />
       </Box>
     </RoomProvider>
   );
 };
-
-const CustomDialog = ({open, setOpen}: {open: boolean, setOpen:any}) => {
-	return <AlertDialog.Root open={open}>
-	{/* <AlertDialog.Trigger>
-		<Button>open</Button>
-	</AlertDialog.Trigger> */}
-
-	<AlertDialog.Content  style={{ maxWidth: 450 }}>
-		{/* <AlertDialog.Title>Revoke access</AlertDialog.Title> */}
-		<AlertDialog.Description size="2">
-			You are not authenticated to access this workspace. <br />
-			Login and try again.
-		</AlertDialog.Description>
-
-		<Flex gap="3" mt="4" justify="end">
-			<AlertDialog.Cancel>
-				<Button variant="soft" color="gray">
-					Cancel
-				</Button>
-			</AlertDialog.Cancel>
-			<AlertDialog.Action>
-				<Button variant="solid" color="red" >
-					Login
-				</Button>
-			</AlertDialog.Action>
-		</Flex>
-	</AlertDialog.Content>
-</AlertDialog.Root>	
-}
 
 export default Home;

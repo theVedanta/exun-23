@@ -7,7 +7,7 @@ import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Button, Flex } from "@radix-ui/themes";
+import { Button, Dialog, Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import createWorkspace from "@/utils";
 import Xarrow, { Xwrapper } from "react-xarrows";
@@ -25,6 +25,7 @@ const Canvas = ({
     const constraintsRef = useRef(null);
     const { data: session } = useSession();
     const [openAlert, setOpenAlert] = useState(false);
+    const [alertContent, setAlertContent] = useState('');
 
     useEffect(() => {
         session && session.user && setUser(session.user as User);
@@ -108,44 +109,31 @@ const Canvas = ({
                     style={{ position: "fixed", bottom: "30px" }}
                 >
                     <AddIdea workspace={workspace} />
-                    <Commands setOpenAlert={setOpenAlert} workspace={workspace} />
+                    <Commands setOpenAlert={setOpenAlert} setAlertContent={setAlertContent} workspace={workspace} />
                     <Auth />
                 </Flex>
-        		<CustomDialog open={openAlert} setOpen={setOpenAlert} />
-
+        		<CustomDialog open={openAlert} setOpenAlert={setOpenAlert}  alertContent={alertContent} />
+                        
             </motion.div>
         </>
     );
 };
 
 
-const CustomDialog = ({open, setOpen}: {open: boolean, setOpen:any}) => {
-	return <AlertDialog.Root open={open}>
-	{/* <AlertDialog.Trigger>
-		<Button>open</Button>
-	</AlertDialog.Trigger> */}
-
-	<AlertDialog.Content  style={{ maxWidth: 450 }}>
-		{/* <AlertDialog.Title>Revoke access</AlertDialog.Title> */}
-		<AlertDialog.Description size="2">
-			You are not authenticated to access this workspace. <br />
-			Login and try again.
-		</AlertDialog.Description>
-
-		<Flex gap="3" mt="4" justify="end">
-			<AlertDialog.Cancel>
-				<Button variant="soft" color="gray">
-					Cancel
-				</Button>
-			</AlertDialog.Cancel>
-			<AlertDialog.Action>
-				<Button variant="solid" color="red" >
-					Login
-				</Button>
-			</AlertDialog.Action>
-		</Flex>
-	</AlertDialog.Content>
-</AlertDialog.Root>	
+const CustomDialog = ({open, alertContent,setOpenAlert}: {open: boolean, alertContent:string, setOpenAlert:any}) => {
+	return <Dialog.Root open={open}>
+            <Dialog.Content style={{ maxWidth: 450 }}>
+                <Dialog.Title>Summary</Dialog.Title>
+                {alertContent}
+                <Flex gap="3" mt="4" justify="end">
+                    <Dialog.Close>
+                        <Button variant="soft" color="gray" onClick={()=> setOpenAlert(false)}>
+                            Cancel
+                        </Button>
+                    </Dialog.Close>
+                </Flex>
+            </Dialog.Content>
+        </Dialog.Root>
 }
 
 

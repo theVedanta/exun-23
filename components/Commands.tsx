@@ -4,6 +4,10 @@ import axios from "axios";
 
 const summarise = async (workspace: Workspace) => {
     const res = await axios.post(`/api/summarise`, { workspace });
+    // const data = await res.json();
+    console.log(res);
+    return res.data.msg;
+    
 };
 
 const suggest = async (workspace: Workspace) => {
@@ -11,7 +15,7 @@ const suggest = async (workspace: Workspace) => {
     console.log(res);
 };
 
-const Commands = ({ workspace,setOpenAlert }: { workspace: Workspace | undefined, setOpenAlert?: any }) => {
+const Commands = ({ workspace,setOpenAlert, setAlertContent }: { workspace: Workspace | undefined, setOpenAlert?: any, setAlertContent?:any }) => {
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -23,8 +27,14 @@ const Commands = ({ workspace,setOpenAlert }: { workspace: Workspace | undefined
 
             <DropdownMenu.Content>
                 <DropdownMenu.Item
-                    onClick={() =>{
-                        workspace && summarise(workspace)
+                    onClick={async () =>{
+                        let data = '';
+                        if (workspace) {
+
+                            data= await summarise(workspace)
+                        }
+                        setOpenAlert(true)
+                        setAlertContent(data)
                     }}
                     shortcut="⌘L"
                 >
