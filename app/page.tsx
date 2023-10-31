@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 import Notes from "@/components/Notes";
 import { useSession } from "next-auth/react";
-import { CopyIcon, Share1Icon } from "@radix-ui/react-icons";
+import { CopyIcon } from "@radix-ui/react-icons";
 import { useClipboard } from "react-haiku";
 
 const Home = () => {
@@ -28,7 +28,7 @@ const Home = () => {
                         : localStorage.removeItem("workspace")
                 );
             } catch (err) {
-                console.log(err);
+                // console.log(err);
             }
         }
     };

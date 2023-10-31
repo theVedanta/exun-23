@@ -35,7 +35,6 @@ const Canvas = ({
             const ws = await createWorkspace(agenda, user && user.email);
             setWorkspace(ws);
         } else {
-            console.log(workspace);
             await updateDoc(doc(db, "workspaces", workspace.id), {
                 agenda,
             });
