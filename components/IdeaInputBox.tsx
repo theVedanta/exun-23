@@ -42,7 +42,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
 	};
 
 	const removeIdea = async () => {
-			if (workspace) {
+			if (workspace && workspace.ideas) {
 				const ideas = workspace.ideas.filter((item, i) => item.id!==idea.id)
 				await updateDoc(doc(db, "workspaces", workspace.id), {
 					ideas,
@@ -69,7 +69,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
 				resize: "both",
 			}}
 		>
-			<Flex justify={'space-between'}>
+			<Flex justify='space-between'>
 				<Heading style={{ fontSize: "19px", fontWeight: "600" }}>
 					{idea.name}
 				</Heading>
