@@ -1,17 +1,15 @@
 "use client";
 
-import { Box, Heading } from "@radix-ui/themes";
+import dynamic from "next/dynamic";
+import { Box, Button, Flex, Heading, IconButton } from "@radix-ui/themes";
 import React, { useEffect, useRef, useState } from "react";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-// @ts-ignore
-import CheckList from "@editorjs/checklist";
-// @ts-ignore
-import List from "@editorjs/list";
-// @ts-ignore
-import CodeTool from "@editorjs/code";
+import  { OutputData } from "@editorjs/editorjs";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
+import { Cross1Icon } from "@radix-ui/react-icons";
+const Editor = dynamic(() => import("./Editor"), {
+    ssr: false,
+});
 
 interface Props {
 	idea: Idea;
@@ -20,7 +18,9 @@ interface Props {
 
 const IdeaInputBox = ({ idea, workspace }: Props) => {
 	const boxRef = useRef(null);
-	const editorRef = useRef<EditorJS | null>(null);
+	const editorRef = useRef(null);
+	const [created, setCreated] = useState(false);
+
 
 	const saveChanges = async () => {
 		if (editorRef.current && workspace) {
@@ -38,24 +38,15 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
 		}
 	};
 
-	useEffect(() => {
-		if (boxRef.current) {
-			editorRef.current = new EditorJS({
-				holder: boxRef.current,
-				tools: {
-					header: Header,
-					checklist: CheckList,
-					list: List,
-					code: CodeTool,
-				},
-				data: idea.notes,
-				placeholder: "Write your heart out...",
-				onChange: (api, event) => {
-					saveChanges();
-				},
-			});
-		}
-	}, [boxRef]);
+	const removeIdea = async () => {
+			if (workspace && workspace.ideas) {
+				const ideas = workspace.ideas.filter((item, i) => item.id!==idea.id)
+				await updateDoc(doc(db, "workspaces", workspace.id), {
+					ideas,
+				});
+			}
+	}
+
 
 	return (
 		<Box
@@ -75,18 +66,17 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
 				resize: "both",
 			}}
 		>
-			<Heading style={{ fontSize: "19px", fontWeight: "600" }}>
-				{idea.name}
-			</Heading>
+			<Flex justify='space-between'>
+				<Heading style={{ fontSize: "19px", fontWeight: "600" }}>
+					{idea.name}
+				</Heading>
+				<IconButton onClick={() => removeIdea()}>
+					<Cross1Icon />
+				</IconButton>
+			</Flex>
 			<hr />
 
-			<Box
-				style={{
-					paddingTop: "5px",
-				}}
-				id="notes"
-				ref={boxRef}
-			></Box>
+			<Editor workspace={workspace} name='idea' editorRef={editorRef} setUser={null} setCreated={setCreated} created={created}  saveChanges={saveChanges} data={idea.notes} />
 		</Box>
 	);
 };

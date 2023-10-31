@@ -1,40 +1,21 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
+import { OutputData } from "@editorjs/editorjs";
 import { Box, Heading } from "@radix-ui/themes";
-import Header from "@editorjs/header";
-// @ts-ignore
-import CheckList from "@editorjs/checklist";
-// @ts-ignore
-import List from "@editorjs/list";
-// @ts-ignore
-import CodeTool from "@editorjs/code";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
-import { useSession } from "next-auth/react";
-import { v4 } from "uuid";
+
+const Editor = dynamic(() => import("./Editor"), {
+    ssr: false,
+});
 
 const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
-	const { data: session } = useSession();
-	const boxRef = useRef(null);
-	const editorRef = useRef<EditorJS | null>(null);
+	const editorRef = useRef(null);
 	const [created, setCreated] = useState(false);
-	const makeID = () => {
-		const newID = v4();
-		localStorage.setItem("temporary-user", newID);
-
-		return newID;
-	};
-
-	const user =
-		session && session.user
-			? session?.user?.email
-			: localStorage.getItem("temporary-user")
-			? localStorage.getItem("temporary-user")
-			: makeID();
-
+	const [user, setUser] = useState<String | null>(null)
+	
 	const saveChanges = async () => {
 		if (editorRef.current && workspace) {
 			const outData: OutputData = await editorRef.current.save();
@@ -71,29 +52,6 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
 		}
 	};
 
-	useEffect(() => {
-		if (boxRef.current && workspace && !created) {
-			const noteObj = workspace?.notes?.find((n) => n.email === user);
-
-			editorRef.current = new EditorJS({
-				holder: boxRef.current,
-				tools: {
-					header: Header,
-					checklist: CheckList,
-					list: List,
-					code: CodeTool,
-				},
-				placeholder: "Write your heart out...",
-				data: workspace?.notes ? noteObj?.notes : undefined,
-				onChange: (api, event) => {
-					saveChanges();
-				},
-			});
-
-			setCreated(true);
-		}
-	}, [boxRef, workspace]);
-
 	return (
 		<Box
 			position="fixed"
@@ -112,7 +70,8 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
 			<Heading>Notes</Heading>
 			<hr />
 
-			<Box style={{ paddingTop: "10px" }} ref={boxRef}></Box>
+			<Editor editorRef={editorRef} name='note' saveChanges={saveChanges} setUser={setUser} workspace={workspace} setCreated={setCreated} created={created} data={workspace?.notes ? workspace?.notes?.find((n) => n.email === user)?.notes : undefined} />
+
 		</Box>
 	);
 };

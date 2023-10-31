@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
@@ -24,15 +24,15 @@ export default function Page({ params }: { params: { id: string } }) {
 
 	return (
 		<AlertDialog.Root open>
-			<AlertDialog.Trigger>
+			{/* <AlertDialog.Trigger>
 				<Button>open</Button>
-			</AlertDialog.Trigger>
+			</AlertDialog.Trigger> */}
 
 			<AlertDialog.Content style={{ maxWidth: 450 }}>
 				<AlertDialog.Title>Revoke access</AlertDialog.Title>
 				<AlertDialog.Description size="2">
-					Are you sure? This application will no longer be accessible
-					and any existing sessions will be expired.
+					You are not authenticated to access this workspace. <br />
+					Login and try again.
 				</AlertDialog.Description>
 
 				<Flex gap="3" mt="4" justify="end">
@@ -42,8 +42,8 @@ export default function Page({ params }: { params: { id: string } }) {
 						</Button>
 					</AlertDialog.Cancel>
 					<AlertDialog.Action>
-						<Button variant="solid" color="red">
-							Revoke access
+						<Button variant="solid" color="red" onClick={() => signIn()}>
+							Login
 						</Button>
 					</AlertDialog.Action>
 				</Flex>
