@@ -121,7 +121,10 @@ const DialogBox = ({ session, setWorkspaces, workspaces }: any) => {
                                     ? session.user.email
                                     : ""
                             );
+
                             setWorkspaces([...workspaces, ws]);
+                            localStorage.setItem("workspace", ws.id);
+                            window.location.reload();
                         }}
                     >
                         Create

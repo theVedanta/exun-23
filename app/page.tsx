@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 import Notes from "@/components/Notes";
 import { useSession } from "next-auth/react";
-import { Share1Icon } from "@radix-ui/react-icons";
+import { CopyIcon, Share1Icon } from "@radix-ui/react-icons";
 import { useClipboard } from "react-haiku";
 
 const Home = () => {
@@ -63,6 +63,7 @@ const Home = () => {
 
                 <Flex>
                     {session && session.user && <Workspaces />}
+
                     <IconButton
                         size="3"
                         style={{ marginLeft: "20px" }}
@@ -73,7 +74,7 @@ const Home = () => {
                             )
                         }
                     >
-                        <Share1Icon />
+                        <CopyIcon />
                     </IconButton>
                 </Flex>
             </Flex>
