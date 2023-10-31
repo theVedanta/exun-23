@@ -10,6 +10,7 @@ import Provider from "@/components/Provider";
 export const metadata: Metadata = {
     title: "Storm",
     description: "An app to help you brainstorm ideas",
+    icons: "logo.png"
 };
 
 export default function RootLayout({
