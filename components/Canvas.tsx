@@ -7,11 +7,12 @@ import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Flex } from "@radix-ui/themes";
+import { Button, Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import createWorkspace from "@/utils";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import Commands from "./Commands";
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
 
 const Canvas = ({
     workspace,
@@ -23,6 +24,7 @@ const Canvas = ({
     const [user, setUser] = useState<User>();
     const constraintsRef = useRef(null);
     const { data: session } = useSession();
+    const [openAlert, setOpenAlert] = useState(false);
 
     useEffect(() => {
         session && session.user && setUser(session.user as User);
@@ -106,12 +108,45 @@ const Canvas = ({
                     style={{ position: "fixed", bottom: "30px" }}
                 >
                     <AddIdea workspace={workspace} />
-                    <Commands workspace={workspace} />
+                    <Commands setOpenAlert={setOpenAlert} workspace={workspace} />
                     <Auth />
                 </Flex>
+        		<CustomDialog open={openAlert} setOpen={setOpenAlert} />
+
             </motion.div>
         </>
     );
 };
+
+
+const CustomDialog = ({open, setOpen}: {open: boolean, setOpen:any}) => {
+	return <AlertDialog.Root open={open}>
+	{/* <AlertDialog.Trigger>
+		<Button>open</Button>
+	</AlertDialog.Trigger> */}
+
+	<AlertDialog.Content  style={{ maxWidth: 450 }}>
+		{/* <AlertDialog.Title>Revoke access</AlertDialog.Title> */}
+		<AlertDialog.Description size="2">
+			You are not authenticated to access this workspace. <br />
+			Login and try again.
+		</AlertDialog.Description>
+
+		<Flex gap="3" mt="4" justify="end">
+			<AlertDialog.Cancel>
+				<Button variant="soft" color="gray">
+					Cancel
+				</Button>
+			</AlertDialog.Cancel>
+			<AlertDialog.Action>
+				<Button variant="solid" color="red" >
+					Login
+				</Button>
+			</AlertDialog.Action>
+		</Flex>
+	</AlertDialog.Content>
+</AlertDialog.Root>	
+}
+
 
 export default Canvas;

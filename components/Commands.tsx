@@ -11,7 +11,7 @@ const suggest = async (workspace: Workspace) => {
     console.log(res);
 };
 
-const Commands = ({ workspace }: { workspace: Workspace | undefined }) => {
+const Commands = ({ workspace,setOpenAlert }: { workspace: Workspace | undefined, setOpenAlert?: any }) => {
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -23,17 +23,19 @@ const Commands = ({ workspace }: { workspace: Workspace | undefined }) => {
 
             <DropdownMenu.Content>
                 <DropdownMenu.Item
-                    onClick={() => workspace && summarise(workspace)}
+                    onClick={() =>{
+                        workspace && summarise(workspace)
+                    }}
                     shortcut="⌘L"
                 >
                     Summarise Workspace
                 </DropdownMenu.Item>
-                <DropdownMenu.Item
+                {/* <DropdownMenu.Item
                     onClick={() => workspace && suggest(workspace)}
                     shortcut="⌘D"
                 >
                     Suggest themes
-                </DropdownMenu.Item>
+                </DropdownMenu.Item> */}
             </DropdownMenu.Content>
         </DropdownMenu.Root>
     );
