@@ -20,10 +20,12 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     const { data: session } = useSession();
     const boxRef = useRef(null);
     const editorRef = useRef<EditorJS | null>(null);
+    console.log("WORKSPACE IN NOTE");
+    console.log(workspace);
 
     const saveChanges = async () => {
+        console.log("WORKSPACE is being printed");
         console.log(workspace); // pr0coder do this
-
         if (editorRef.current && workspace) {
             const outData: OutputData = await editorRef.current.save();
             console.log("in the if");
@@ -40,6 +42,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
                 { ...noteObj, notes: outData },
             ];
 
+            console.log("UPDATED NOTES:")
             console.log(updatedNotes);
 
             await updateDoc(doc(db, "workspaces", workspace.id), {
@@ -49,7 +52,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     };
 
     useEffect(() => {
-        if (boxRef.current) {
+        if (boxRef.current && workspace) {
             const noteObj = workspace?.notes?.find(
                 (n) => n.email === session?.user?.email
             );
@@ -66,11 +69,13 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
                 placeholder: "Write your heart out...",
                 data: workspace?.notes ? noteObj?.notes : undefined,
                 onChange: (api, event) => {
+                    console.log("workspace on change");
+                    console.log(workspace);
                     saveChanges();
                 },
             });
         }
-    }, [boxRef]);
+    }, [boxRef, workspace]);
 
     return (
         <Box

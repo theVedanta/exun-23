@@ -10,6 +10,8 @@ import Notes from "@/components/Notes";
 
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
+    console.log(workspace);
+    console.log("workspace in page");
 
     const getWorkspace = async (id: string | null) => {
         if (id) {
