@@ -58,6 +58,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 cursor: "text",
                 fontSize: "1rem",
                 textAlign: "left",
+                overflow: "auto",
             }}
             onClick={() => {
                 setEditing(true);
@@ -71,6 +72,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                         position: "absolute",
                         bottom: "28px",
                         width: "calc(100% - 64px)",
+                        background: "#fff",
                     }}
                 >
                     <hr />
