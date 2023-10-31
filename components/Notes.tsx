@@ -1,7 +1,7 @@
 "use client";
 
 import EditorJS, { OutputData } from "@editorjs/editorjs";
-import { Box, Heading, ScrollArea } from "@radix-ui/themes";
+import { Box, Heading } from "@radix-ui/themes";
 import Header from "@editorjs/header";
 // @ts-ignore
 import CheckList from "@editorjs/checklist";
@@ -22,7 +22,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     const editorRef = useRef<EditorJS | null>(null);
 
     const saveChanges = async () => {
-        console.log(workspace);
+        console.log(workspace); // pr0coder do this
 
         if (editorRef.current && workspace) {
             const outData: OutputData = await editorRef.current.save();

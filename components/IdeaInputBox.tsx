@@ -11,6 +11,9 @@ import Table from "@editorjs/table";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 
+// pr0coder take reference here
+// Did you fix the drag issue?
+
 interface Props {
     idea: Idea;
     workspace: Workspace | undefined;

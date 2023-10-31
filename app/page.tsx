@@ -39,6 +39,7 @@ const Home = () => {
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
             <Notes workspace={workspace} />
+
             <Canvas workspace={workspace} setWorkspace={setWorkspace} />
             <Flex
                 justify="between"
