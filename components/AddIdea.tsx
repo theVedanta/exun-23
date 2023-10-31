@@ -43,7 +43,6 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
                     }}
                     size="4"
                     variant="soft"
-                    color="gray"
                     disabled={workspace === undefined}
                 >
                     <PlusIcon />

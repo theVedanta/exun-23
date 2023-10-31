@@ -1,4 +1,6 @@
-export async function GET(request: Request) {
+export async function POST(request: Request) {
+    const { workspace } = await request.json();
+
     const response = await fetch(
         "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
         {
@@ -11,6 +13,7 @@ export async function GET(request: Request) {
             }),
         }
     );
+
     const result = await response.json();
     console.log(result);
 

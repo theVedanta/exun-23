@@ -11,6 +11,7 @@ import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import createWorkspace from "@/utils";
 import Xarrow, { Xwrapper } from "react-xarrows";
+import Commands from "./Commands";
 
 const Canvas = ({
     workspace,
@@ -107,6 +108,9 @@ const Canvas = ({
                     style={{ position: "fixed", bottom: "30px" }}
                 >
                     <AddIdea workspace={workspace} />
+
+                    <Commands workspace={workspace} />
+
                     <Auth />
                 </Flex>
             </motion.div>

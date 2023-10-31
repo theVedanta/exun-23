@@ -34,7 +34,6 @@ const Auth = () => {
                 style={{ cursor: "pointer" }}
                 size="4"
                 variant="soft"
-                color="gray"
                 onClick={() => {
                     signOut();
                     localStorage.removeItem("workspace");
@@ -51,7 +50,6 @@ const Auth = () => {
                 style={{ cursor: "pointer" }}
                 size="4"
                 variant="soft"
-                color="gray"
                 onClick={() => {
                     signIn();
                 }}

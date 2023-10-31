@@ -8,11 +8,11 @@ const linkify = require("linkifyjs");
 const TextBox = ({ editing, text, setEditing, onChange }: any) => {
     function extractDomainFromLink(linkText: string) {
         // Use a regular expression to match and extract the domain
-        const domainRegex = /\/\/(www\.)?([^/]+)\//;
+        const domainRegex = /(?:https?:\/\/)?(?:www\.)?([^/]+)/;
         const match = linkText.match(domainRegex);
 
-        if (match && match.length > 2) {
-            return match[2]; // The extracted domain
+        if (match && match.length > 1) {
+            return match[1]; // The extracted domain
         } else {
             return null; // No domain found in the link text
         }
