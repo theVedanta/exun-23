@@ -38,7 +38,6 @@ const Home = () => {
             position="relative"
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
-            {workspace?.id}
             <Notes workspace={workspace} />
             <Canvas workspace={workspace} setWorkspace={setWorkspace} />
             <Flex
