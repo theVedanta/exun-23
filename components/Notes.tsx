@@ -71,7 +71,6 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
 			<hr />
 
 			<Editor editorRef={editorRef} name='note' saveChanges={saveChanges} setUser={setUser} workspace={workspace} setCreated={setCreated} created={created} data={workspace?.notes ? workspace?.notes?.find((n) => n.email === user)?.notes : undefined} />
-
 		</Box>
 	);
 };

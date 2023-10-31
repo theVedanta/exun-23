@@ -21,10 +21,7 @@ function Selections({ id }: { id: string }) {
 
 	return (
 		<>
-			{users.map(({ connectionId, presence }: {connectionId: Number, presence: Presence}, i: {i: Number}) => {
-			{/* {users.map(({ connectionId, presence }, i) => { */}
-				// console.log(typeof connectionId);
-				
+			{users.map(({ connectionId, presence }: {connectionId: Number, presence: Presence}, i: {i: Number}) => {				
 				if (presence.selectedId === id) {
 					return (
 						<Selection

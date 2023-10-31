@@ -37,7 +37,9 @@ export default function Editor({
   //initialize editorjs
   useEffect(() => {
     //initialize editor if we don't have a reference
+    console.log(created);
     if (holderRef.current && workspace&& !created) {
+      
         if(setUser) {
             setUser(session && session.user
                 ? session?.user?.email
@@ -54,15 +56,22 @@ export default function Editor({
           placeholder: "Write your heart out...",
           onChange(api, event) {
             saveChanges();
-            setCreated(true);
           },
         });
+        setCreated(true);
 
-    }
+      }
+      
+      return  () => {
+        if (workspace&& holderRef.current && holderRef.current.destroy) {
+          holderRef.current.destroy();
+        }
+      };
 
   }, [holderRef, workspace]);
 
   return (
+    <>
     <Box
       style={{
         paddingTop: "5px",
@@ -70,5 +79,6 @@ export default function Editor({
       id="notes"
       ref={holderRef}
     ></Box>
+    </>
   );
 }
