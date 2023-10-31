@@ -1,15 +1,28 @@
+interface NoteObject {
+    email: string;
+    notes: OutputData;
+}
+
 interface Workspace {
     id: string;
     agenda: string;
-    ideas?: Ideas[];
-    notes?: Object;
+    ideas?: Idea[];
+    notes?: NoteObject[];
+    user?: string;
 }
 
-interface Ideas {
+interface Idea {
     id: string;
     name: string;
-    description?: string;
     pros?: string[];
     cons?: string[];
     description?: Object;
+    votes: string[]; // just the email of the person who voted for it
+    notes: OutputData; // Only one note so no need of the user email
+}
+
+interface User {
+    email: string;
+    name: string;
+    image: string;
 }

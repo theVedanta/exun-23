@@ -1,30 +1,76 @@
 "use client";
 
-import EditorJS from "@editorjs/editorjs";
-import { Box, Heading, ScrollArea } from "@radix-ui/themes";
+import EditorJS, { OutputData } from "@editorjs/editorjs";
+import { Box, Heading } from "@radix-ui/themes";
 import Header from "@editorjs/header";
 // @ts-ignore
 import CheckList from "@editorjs/checklist";
 // @ts-ignore
 import List from "@editorjs/list";
+// @ts-ignore
+import Table from "@editorjs/table";
+// @ts-ignore
+import CodeTool from "@editorjs/code";
 import { useEffect, useRef } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import db from "@/app/db";
+import { useSession } from "next-auth/react";
 
-const Notes = () => {
+const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
+    const { data: session } = useSession();
     const boxRef = useRef(null);
+    const editorRef = useRef<EditorJS | null>(null);
+
+    const saveChanges = async () => {
+        console.log(workspace); // pr0coder do this
+
+        if (editorRef.current && workspace) {
+            const outData: OutputData = await editorRef.current.save();
+            console.log("in the if");
+
+            let noteObj = workspace.notes?.find(
+                (n) => n.email === session?.user?.email
+            );
+            const otherNotes = workspace.notes?.filter(
+                (n) => n.email !== session?.user?.email
+            );
+
+            const updatedNotes = [
+                ...(otherNotes as NoteObject[]),
+                { ...noteObj, notes: outData },
+            ];
+
+            console.log(updatedNotes);
+
+            await updateDoc(doc(db, "workspaces", workspace.id), {
+                notes: updatedNotes,
+            });
+        }
+    };
 
     useEffect(() => {
         if (boxRef.current) {
-            new EditorJS({
+            const noteObj = workspace?.notes?.find(
+                (n) => n.email === session?.user?.email
+            );
+
+            editorRef.current = new EditorJS({
                 holder: boxRef.current,
                 tools: {
                     header: Header,
                     checklist: CheckList,
                     list: List,
+                    table: Table,
+                    code: CodeTool,
                 },
                 placeholder: "Write your heart out...",
+                data: workspace?.notes ? noteObj?.notes : undefined,
+                onChange: (api, event) => {
+                    saveChanges();
+                },
             });
         }
-    }, []);
+    }, [boxRef]);
 
     return (
         <Box
@@ -38,12 +84,13 @@ const Notes = () => {
                 width: "20%",
                 borderRight: "2px solid black",
                 overflowY: "scroll",
+                zIndex: 10,
             }}
         >
             <Heading>Notes</Heading>
             <hr />
 
-            <Box style={{ paddingTop: "30px" }} id="notes" ref={boxRef}></Box>
+            <Box style={{ paddingTop: "10px" }} ref={boxRef}></Box>
         </Box>
     );
 };

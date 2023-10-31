@@ -8,6 +8,7 @@ const linkify = require("linkifyjs");
 const TextBox = ({ editing, text, setEditing, onChange }: any) => {
     const parsedText = text && ReactHtmlParser(linkifyHtml(text));
     const links = text ? linkify.find(text) : [];
+    let timeout: NodeJS.Timeout;
 
     return editing ? (
         <TextArea
@@ -22,7 +23,12 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 padding: "16px",
                 borderRadius: "15px",
             }}
-            onChange={(eve) => onChange(eve)}
+            onChange={(eve) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    onChange(eve);
+                }, 1000);
+            }}
             defaultValue={text && text}
         />
     ) : (
@@ -31,13 +37,15 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 position: "absolute",
                 width: "400px",
                 minHeight: "300px",
-                background: "#eee",
-                border: "1px solid #ccc",
+                background: "#fff",
+                border: "1px solid #ddd",
                 top: "60%",
                 left: "60%",
                 padding: "28px",
                 borderRadius: "10px",
                 cursor: "text",
+                fontSize: "1rem",
+                textAlign: "left",
             }}
             onClick={() => {
                 setEditing(true);
