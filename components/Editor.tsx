@@ -7,39 +7,37 @@ import { useSession } from "next-auth/react";
 
 interface Props {
     data: any;
-    editorRef:any;
-    saveChanges:any;
-    workspace:Workspace | undefined;
-    created:boolean;
-    setCreated:any;
-    setUser:any | null | undefined;
+    editorRef: any;
+    saveChanges: any;
+    workspace: Workspace | undefined;
+    created: boolean;
+    setCreated: any;
+    setUser: any | null | undefined;
     name: string;
 }
 
 export default function Editor({
-  data,
-  editorRef,
-  saveChanges,
-  workspace,
-  created,
-  setCreated,
-  setUser,
-  name
-}:Props) {
-    const holderRef = useRef(null)
-	const { data: session } = useSession();
+    data,
+    editorRef,
+    saveChanges,
+    workspace,
+    created,
+    setCreated,
+    setUser,
+    name,
+}: Props) {
+    const holderRef = useRef(null);
+    const { data: session } = useSession();
     const makeID = () => {
-		const newID = v4();
-		localStorage.setItem("temporary-user", newID);
-		return newID;
-	};
+        const newID = v4();
+        localStorage.setItem("temporary-user", newID);
+        return newID;
+    };
 
   //initialize editorjs
   useEffect(() => {
     //initialize editor if we don't have a reference
-    console.log(created);
     if (holderRef.current && workspace&& !created) {
-      
         if(setUser) {
             setUser(session && session.user
                 ? session?.user?.email
@@ -47,7 +45,6 @@ export default function Editor({
                 ? localStorage.getItem("temporary-user")
                 : makeID())
         }
-        console.log(name);
         
         editorRef.current = new EditorJS({
           holder: holderRef.current,
@@ -58,16 +55,12 @@ export default function Editor({
             saveChanges();
           },
         });
-        
         setCreated(true);
-
-      }
-      
+    }
 
   }, [holderRef, workspace]);
 
   return (
-    <>
     <Box
       style={{
         paddingTop: "5px",
@@ -75,6 +68,5 @@ export default function Editor({
       id="notes"
       ref={holderRef}
     ></Box>
-    </>
   );
 }
