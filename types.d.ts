@@ -1,8 +1,13 @@
+interface NoteObject {
+    email: string;
+    notes: OutputData;
+}
+
 interface Workspace {
     id: string;
     agenda: string;
     ideas?: Idea[];
-    notes?: Object;
+    notes?: NoteObject[];
     user?: string;
 }
 
@@ -13,6 +18,7 @@ interface Idea {
     cons?: string[];
     description?: Object;
     votes: string[]; // just the email of the person who voted for it
+    notes: OutputData; // Only one note so no need of the user email
 }
 
 interface User {

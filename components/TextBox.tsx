@@ -45,7 +45,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 borderRadius: "10px",
                 cursor: "text",
                 fontSize: "1rem",
-                textAlign: "justify",
+                textAlign: "left",
             }}
             onClick={() => {
                 setEditing(true);

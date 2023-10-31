@@ -6,19 +6,25 @@ import { doc, onSnapshot } from "firebase/firestore";
 import db from "./db";
 import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
-
+import Notes from "@/components/Notes";
 
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
 
     const getWorkspace = async (id: string | null) => {
         if (id) {
-            onSnapshot(
-                doc(db, "workspaces", id),
-                (obj) =>
-                    obj.exists() &&
-                    setWorkspace({ ...obj.data(), id: obj.id } as Workspace)
-            );
+            try {
+                onSnapshot(doc(db, "workspaces", id), (obj) =>
+                    obj.exists()
+                        ? setWorkspace({
+                              ...obj.data(),
+                              id: obj.id,
+                          } as Workspace)
+                        : localStorage.removeItem("workspace")
+                );
+            } catch (err) {
+                console.log(err);
+            }
         }
     };
 
@@ -32,6 +38,8 @@ const Home = () => {
             position="relative"
             style={{ paddingLeft: "20%", height: "100vh", overflow: "hidden" }}
         >
+            {workspace?.id}
+            <Notes workspace={workspace} />
             <Canvas workspace={workspace} setWorkspace={setWorkspace} />
             <Flex
                 justify="between"

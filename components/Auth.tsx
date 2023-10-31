@@ -24,6 +24,7 @@ const Auth = () => {
             session &&
             session.user &&
             session.user.email &&
+            localStorage.getItem("workspace") &&
             assignUser(session.user.email);
     }, [session]);
 

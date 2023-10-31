@@ -48,6 +48,7 @@ const Canvas = ({
                 style={{
                     height: "100vh",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                 }}
@@ -55,6 +56,7 @@ const Canvas = ({
             >
                 <Xwrapper>
                     <Circle
+                        workspace={workspace}
                         constraintsRef={constraintsRef}
                         title="Agenda"
                         onChange={(e) => editAgenda(e)}
@@ -67,35 +69,38 @@ const Canvas = ({
                         {workspace && workspace.agenda}
                     </Circle>
 
-                    {workspace && workspace.ideas
-                        ? workspace.ideas.map((values) => {
-                              return (
-                                  <>
-                                      <Circle
-                                          constraintsRef={constraintsRef}
-                                          title={values.name}
-                                          onChange={(e) =>
-                                              console.log("change")
-                                          }
-                                          type="notes"
-                                          idea={values}
-                                          id={values.name.split(" ").join("_")}
-                                      >
-                                          {values.name}
-                                      </Circle>
+                    <Flex>
+                        {workspace && workspace.ideas
+                            ? workspace.ideas.map((idea: Idea) => {
+                                  return (
+                                      <>
+                                          <Circle
+                                              constraintsRef={constraintsRef}
+                                              title={idea.name}
+                                              onChange={(e) =>
+                                                  console.log("change")
+                                              }
+                                              type="notes"
+                                              idea={idea}
+                                              id={idea.id}
+                                              workspace={workspace}
+                                          >
+                                              {idea.name}
+                                          </Circle>
 
-                                      <Xarrow
-                                          start="agenda" //can be react ref
-                                          end={values.name.split(" ").join("_")} //or an id
-                                          color="#6a80d9"
-                                          headSize={0}
-                                          strokeWidth={2}
-                                          curveness={0.4}
-                                      />
-                                  </>
-                              );
-                          })
-                        : null}
+                                          <Xarrow
+                                              start="agenda" //can be react ref
+                                              end={idea.id} //or an id
+                                              color="#6a80d9"
+                                              headSize={0}
+                                              strokeWidth={2}
+                                              curveness={0.6}
+                                          />
+                                      </>
+                                  );
+                              })
+                            : null}
+                    </Flex>
                 </Xwrapper>
                 <Flex
                     gap="5"

@@ -15,6 +15,7 @@ interface Props {
     id: string;
     ref?: any;
     isAgenda?: Boolean;
+    workspace: Workspace | undefined;
 }
 
 const Circle = ({
@@ -27,6 +28,7 @@ const Circle = ({
     id,
     ref,
     isAgenda = false,
+    workspace,
 }: Props) => {
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -80,7 +82,10 @@ const Circle = ({
                             editing={editing}
                         />
                     ) : (
-                        <IdeaInputBox idea={idea as Idea} />
+                        <IdeaInputBox
+                            idea={idea as Idea}
+                            workspace={workspace}
+                        />
                     ))}
             </Flex>
         </motion.div>

@@ -10,21 +10,27 @@ import {
 import { PlusIcon } from "@radix-ui/react-icons";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
+import { v4 as uuidv4 } from "uuid";
 
 const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
     const addIdea = async () => {
         const name = (
             document.getElementById("idea-name") as HTMLInputElement
         ).value.trim();
-        // const description = (
-        //     document.getElementById("idea-description") as HTMLInputElement
-        // ).value.trim();
-            
-        if (workspace ) {
-            const ideas = workspace.ideas ?  [...workspace.ideas, { name }] : [{name}];
-            await updateDoc(doc(db, "workspaces", workspace.id), { ideas });
-        } else{ 
-            
+        const description = (
+            document.getElementById("idea-description") as HTMLInputElement
+        ).value.trim();
+
+        const newIdea = { id: uuidv4(), name, description };
+
+        if (workspace && name !== "") {
+            const ideas = workspace.ideas
+                ? [...workspace.ideas, newIdea]
+                : [newIdea];
+
+            await updateDoc(doc(db, "workspaces", workspace.id), {
+                ideas,
+            });
         }
     };
 
