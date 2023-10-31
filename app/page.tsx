@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Heading } from "@radix-ui/themes";
+import { Box, Flex, Heading, IconButton } from "@radix-ui/themes";
 import Canvas from "../components/Canvas";
 import { doc, onSnapshot } from "firebase/firestore";
 import db from "./db";
@@ -8,12 +8,12 @@ import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 import Notes from "@/components/Notes";
 import { useSession } from "next-auth/react";
+import { Share1Icon } from "@radix-ui/react-icons";
+import clipboardy from "clipboardy";
 
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
     const { data: session } = useSession();
-    console.log(workspace);
-    console.log("workspace in page");
 
     const getWorkspace = async (id: string | null) => {
         if (id) {
@@ -60,7 +60,18 @@ const Home = () => {
                     {workspace && workspace.agenda?.length > 30 && "..."}
                 </Heading>
 
-                {session && session.user && <Workspaces />}
+                <Flex>
+                    {session && session.user && <Workspaces />}
+                    <IconButton
+                        onClick={() =>
+                            clipboardy.writeSync(
+                                `http://localhost:3000/${workspace?.id}`
+                            )
+                        }
+                    >
+                        <Share1Icon />
+                    </IconButton>
+                </Flex>
             </Flex>
         </Box>
     );

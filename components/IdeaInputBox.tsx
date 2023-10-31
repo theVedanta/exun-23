@@ -84,8 +84,6 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
             <Box
                 style={{
                     paddingTop: "5px",
-                    resize: "both",
-                    overflow: "auto",
                 }}
                 id="notes"
                 ref={boxRef}

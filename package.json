@@ -21,6 +21,7 @@
     "@radix-ui/themes": "^2.0.0",
     "@types/react-html-parser": "^2.0.4",
     "axios": "^1.6.0",
+    "clipboardy": "^4.0.0",
     "firebase": "^10.5.2",
     "framer-motion": "^10.16.4",
     "linkify-html": "^4.1.1",

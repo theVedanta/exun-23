@@ -8,51 +8,70 @@ import CheckList from "@editorjs/checklist";
 // @ts-ignore
 import List from "@editorjs/list";
 // @ts-ignore
-import Table from "@editorjs/table";
-// @ts-ignore
 import CodeTool from "@editorjs/code";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import { useSession } from "next-auth/react";
+import { v4 } from "uuid";
 
 const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     const { data: session } = useSession();
     const boxRef = useRef(null);
     const editorRef = useRef<EditorJS | null>(null);
-    console.log("WORKSPACE IN NOTE");
-    console.log(workspace);
+    const [created, setCreated] = useState(false);
+
+    const makeID = () => {
+        const newID = v4();
+        localStorage.setItem("temporary-user", newID);
+
+        return newID;
+    };
 
     const saveChanges = async () => {
-        console.log("WORKSPACE is being printed");
-        console.log(workspace); // pr0coder do this
         if (editorRef.current && workspace) {
             const outData: OutputData = await editorRef.current.save();
-            console.log("in the if");
+            const user =
+                session && session.user
+                    ? session?.user?.email
+                    : localStorage.getItem("temporary-user")
+                    ? localStorage.getItem("temporary-user")
+                    : makeID();
 
-            let noteObj = workspace.notes?.find(
-                (n) => n.email === session?.user?.email
+            // Searching a user with email
+            const noteIndex = workspace?.notes?.findIndex(
+                (note) => note.email === user
             );
-            const otherNotes = workspace.notes?.filter(
-                (n) => n.email !== session?.user?.email
-            );
 
-            const updatedNotes = [
-                ...(otherNotes as NoteObject[]),
-                { ...noteObj, notes: outData },
-            ];
+            // Not found
+            if (noteIndex === -1 || noteIndex === undefined) {
+                await updateDoc(doc(db, "workspaces", workspace.id), {
+                    notes: [
+                        ...(workspace.notes ? workspace.notes : []),
+                        { email: user, notes: outData },
+                    ],
+                });
+            } else {
+                // Found
+                if (workspace.notes) {
+                    const updatedNotes = workspace.notes
+                        ? [...workspace?.notes]
+                        : [];
+                    updatedNotes[noteIndex] = {
+                        email: user as string,
+                        notes: outData,
+                    };
 
-            console.log("UPDATED NOTES:")
-            console.log(updatedNotes);
-
-            await updateDoc(doc(db, "workspaces", workspace.id), {
-                notes: updatedNotes,
-            });
+                    await updateDoc(doc(db, "workspaces", workspace.id), {
+                        notes: updatedNotes,
+                    });
+                }
+            }
         }
     };
 
     useEffect(() => {
-        if (boxRef.current && workspace) {
+        if (boxRef.current && workspace && !created) {
             const noteObj = workspace?.notes?.find(
                 (n) => n.email === session?.user?.email
             );
@@ -68,11 +87,11 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
                 placeholder: "Write your heart out...",
                 data: workspace?.notes ? noteObj?.notes : undefined,
                 onChange: (api, event) => {
-                    console.log("workspace on change");
-                    console.log(workspace);
                     saveChanges();
                 },
             });
+
+            setCreated(true);
         }
     }, [boxRef, workspace]);
 
