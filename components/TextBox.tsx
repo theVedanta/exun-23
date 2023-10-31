@@ -6,6 +6,18 @@ import ReactHtmlParser from "react-html-parser";
 const linkify = require("linkifyjs");
 
 const TextBox = ({ editing, text, setEditing, onChange }: any) => {
+    function extractDomainFromLink(linkText: string) {
+        // Use a regular expression to match and extract the domain
+        const domainRegex = /\/\/(www\.)?([^/]+)\//;
+        const match = linkText.match(domainRegex);
+
+        if (match && match.length > 2) {
+            return match[2]; // The extracted domain
+        } else {
+            return null; // No domain found in the link text
+        }
+    }
+
     const parsedText = text && ReactHtmlParser(linkifyHtml(text));
     const links = text ? linkify.find(text) : [];
     let timeout: NodeJS.Timeout;
@@ -38,7 +50,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 width: "400px",
                 minHeight: "300px",
                 background: "#fff",
-                border: "1px solid #ddd",
+                border: "2px solid #eaeefe",
                 top: "60%",
                 left: "60%",
                 padding: "28px",
@@ -82,9 +94,9 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                                         cursor: "pointer",
                                         marginRight: "10px",
                                     }}
-                                    variant="outline"
+                                    variant="surface"
                                 >
-                                    {link.value}
+                                    {extractDomainFromLink(link.value)}
                                 </Badge>
                             </Link>
                         ))}

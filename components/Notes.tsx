@@ -60,7 +60,6 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
                     header: Header,
                     checklist: CheckList,
                     list: List,
-                    table: Table,
                     code: CodeTool,
                 },
                 placeholder: "Write your heart out...",

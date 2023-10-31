@@ -7,9 +7,11 @@ import db from "./db";
 import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 import Notes from "@/components/Notes";
+import { useSession } from "next-auth/react";
 
 const Home = () => {
     const [workspace, setWorkspace] = useState<Workspace>();
+    const { data: session } = useSession();
 
     const getWorkspace = async (id: string | null) => {
         if (id) {
@@ -52,10 +54,11 @@ const Home = () => {
                 }}
             >
                 <Heading>
-                    {workspace?.agenda.substring(0, 20)}
+                    Workspace: {workspace?.agenda.substring(0, 20)}
                     {workspace && workspace.agenda?.length > 30 && "..."}
                 </Heading>
-                <Workspaces />
+
+                {session && session.user && <Workspaces />}
             </Flex>
         </Box>
     );

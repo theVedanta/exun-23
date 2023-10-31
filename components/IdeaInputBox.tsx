@@ -7,7 +7,7 @@ import CheckList from "@editorjs/checklist";
 // @ts-ignore
 import List from "@editorjs/list";
 // @ts-ignore
-import Table from "@editorjs/table";
+import CodeTool from "@editorjs/code";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 
@@ -47,7 +47,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                     header: Header,
                     checklist: CheckList,
                     list: List,
-                    table: Table,
+                    code: CodeTool,
                 },
                 data: idea.notes,
                 placeholder: "Write your heart out...",
@@ -65,7 +65,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                 width: "400px",
                 maxHeight: "300px",
                 background: "#fff",
-                border: "1px solid #ddd",
+                border: "2px solid #eaeefe",
                 top: "60%",
                 left: "60%",
                 padding: "28px",

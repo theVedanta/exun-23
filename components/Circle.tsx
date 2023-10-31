@@ -54,8 +54,8 @@ const Circle = ({
                 justify="center"
                 align="center"
                 style={{
-                    width: isAgenda ? "120px" : "80px",
-                    height: isAgenda ? "120px" : "80px",
+                    width: isAgenda ? "140px" : "80px",
+                    height: isAgenda ? "140px" : "80px",
                     borderRadius: "50%",
                     transition: "all 0.3s",
                     background: "#eaeefe",
