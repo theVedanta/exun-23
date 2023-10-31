@@ -20,7 +20,6 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     const boxRef = useRef(null);
     const editorRef = useRef<EditorJS | null>(null);
     const [created, setCreated] = useState(false);
-
     const makeID = () => {
         const newID = v4();
         localStorage.setItem("temporary-user", newID);
@@ -28,15 +27,16 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
         return newID;
     };
 
+    const user =
+        session && session.user
+            ? session?.user?.email
+            : localStorage.getItem("temporary-user")
+            ? localStorage.getItem("temporary-user")
+            : makeID();
+
     const saveChanges = async () => {
         if (editorRef.current && workspace) {
             const outData: OutputData = await editorRef.current.save();
-            const user =
-                session && session.user
-                    ? session?.user?.email
-                    : localStorage.getItem("temporary-user")
-                    ? localStorage.getItem("temporary-user")
-                    : makeID();
 
             // Searching a user with email
             const noteIndex = workspace?.notes?.findIndex(
@@ -72,9 +72,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
 
     useEffect(() => {
         if (boxRef.current && workspace && !created) {
-            const noteObj = workspace?.notes?.find(
-                (n) => n.email === session?.user?.email
-            );
+            const noteObj = workspace?.notes?.find((n) => n.email === user);
 
             editorRef.current = new EditorJS({
                 holder: boxRef.current,

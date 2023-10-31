@@ -64,6 +64,8 @@ const Home = () => {
                 <Flex>
                     {session && session.user && <Workspaces />}
                     <IconButton
+                        size="3"
+                        style={{ marginLeft: "20px" }}
                         variant="soft"
                         onClick={() =>
                             clipboard.copy(
