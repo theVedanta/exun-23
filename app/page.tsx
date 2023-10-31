@@ -9,9 +9,10 @@ import Workspaces from "@/components/Workspaces";
 import Notes from "@/components/Notes";
 import { useSession } from "next-auth/react";
 import { Share1Icon } from "@radix-ui/react-icons";
-import clipboardy from "clipboardy";
+import { useClipboard } from "react-haiku";
 
 const Home = () => {
+    const clipboard = useClipboard({ timeout: 2000 });
     const [workspace, setWorkspace] = useState<Workspace>();
     const { data: session } = useSession();
 
@@ -63,8 +64,9 @@ const Home = () => {
                 <Flex>
                     {session && session.user && <Workspaces />}
                     <IconButton
+                        variant="soft"
                         onClick={() =>
-                            clipboardy.writeSync(
+                            clipboard.copy(
                                 `http://localhost:3000/${workspace?.id}`
                             )
                         }
