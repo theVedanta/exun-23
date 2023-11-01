@@ -34,11 +34,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         </Button>
                     </AlertDialog.Cancel>
                     <AlertDialog.Action>
-                        <Button
-                            variant="solid"
-                            color="red"
-                            onClick={() => signIn()}
-                        >
+                        <Button variant="solid" onClick={() => signIn()}>
                             Login
                         </Button>
                     </AlertDialog.Action>

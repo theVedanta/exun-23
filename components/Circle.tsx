@@ -84,7 +84,11 @@ const Circle = ({
 
     return (
         <motion.div
-            style={{ padding: "40px", zIndex: hover ? 12 : 5 }}
+            style={{
+                padding: "40px",
+                paddingTop: "100px",
+                zIndex: hover ? 12 : 5,
+            }}
             drag
             dragConstraints={constraintsRef}
             dragMomentum={false}

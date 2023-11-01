@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Box, Button, Flex, Heading, IconButton } from "@radix-ui/themes";
+import { Box, Flex, Heading, IconButton } from "@radix-ui/themes";
 import Canvas from "../components/Canvas";
 import { doc, onSnapshot } from "firebase/firestore";
 import db from "./db";
@@ -14,85 +14,90 @@ import CursorPresence from "@/components/CursorPresence";
 import { RoomProvider } from "@/liveblocks.config";
 import CustomToast from "@/components/Toast";
 
-
 const Home = () => {
-  const clipboard = useClipboard({ timeout: 2000 });
-  const [workspace, setWorkspace] = useState<Workspace>();
-  const { data: session } = useSession();
-  const [open, setOpen] = useState(false);
+    const clipboard = useClipboard({ timeout: 2000 });
+    const [workspace, setWorkspace] = useState<Workspace>();
+    const { data: session } = useSession();
+    const [open, setOpen] = useState(false);
 
-  const getWorkspace = async (id: string | null) => {
-    if (id) {
-      try {
-        onSnapshot(doc(db, "workspaces", id), (obj) =>
-          obj.exists()
-            ? setWorkspace({
-                ...obj.data(),
-                id: obj.id,
-              } as Workspace)
-            : localStorage.removeItem("workspace")
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+    const getWorkspace = async () => {
+        const id = localStorage.getItem("workspace");
 
-  useEffect(() => {
-    const id = localStorage.getItem("workspace");
-    getWorkspace(id);
-  }, []);
+        if (id) {
+            try {
+                onSnapshot(doc(db, "workspaces", id), (obj) =>
+                    obj.exists()
+                        ? setWorkspace({
+                              ...obj.data(),
+                              id: obj.id,
+                          } as Workspace)
+                        : localStorage.removeItem("workspace")
+                );
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
 
-  return (
-    <RoomProvider
-      id={workspace ? workspace.id : "index-room"}
-      initialPresence={{ cursor: null, selectedId: null }}
-    >
-      <Box
-        position="relative"
-        style={{
-          paddingLeft: "20%",
-          height: "100vh",
-          overflow: "hidden",
-        }}
-      >
-        <Notes workspace={workspace} />
-        <CursorPresence>
-          <Canvas workspace={workspace} setWorkspace={setWorkspace} />
-        </CursorPresence>
-        <Flex
-          justify="between"
-          align="center"
-          style={{
-            position: "fixed",
-            top: "3%",
-            left: "23%",
-            width: "75%",
-          }}
+    useEffect(() => {
+        getWorkspace();
+    }, []);
+
+    return (
+        <RoomProvider
+            id={workspace ? workspace.id : "index-room"}
+            initialPresence={{ cursor: null, selectedId: null }}
         >
-            <Heading>
-              {workspace?.agenda.substring(0, 20)}
-              {workspace && workspace.agenda?.length > 30 && "..."}
-            </Heading>
-          <Flex>
-            {session && session.user && <Workspaces />}
-            <IconButton
-              size="3"
-              style={{ marginLeft: "20px" }}
-              variant="soft"
-              onClick={() => {
-                clipboard.copy(`http://localhost:3000/${workspace?.id}`);
-                setOpen(true);
-              }}
+            <Box
+                position="relative"
+                style={{
+                    paddingLeft: "20%",
+                    height: "100vh",
+                    overflow: "hidden",
+                }}
             >
-              <Share1Icon />
-            </IconButton>
-          </Flex>
-        </Flex>
-        <CustomToast open={open} setOpen={setOpen} />
-      </Box>
-    </RoomProvider>
-  );
+                <Notes workspace={workspace} />
+                <CursorPresence>
+                    <Canvas getWorkspace={getWorkspace} workspace={workspace} />
+                </CursorPresence>
+                <Flex
+                    justify="between"
+                    align="center"
+                    style={{
+                        position: "fixed",
+                        top: "3%",
+                        left: "23%",
+                        width: "75%",
+                    }}
+                >
+                    <Heading>
+                        {workspace?.agenda.substring(0, 20)}
+                        {workspace && workspace.agenda?.length > 20 && "..."}
+                    </Heading>
+                    <Flex>
+                        {session && session.user && <Workspaces />}
+                        {workspace && workspace.id && (
+                            <IconButton
+                                size="3"
+                                style={{ marginLeft: "20px" }}
+                                variant="soft"
+                                onClick={() => {
+                                    clipboard.copy(
+                                        `${process.env.NEXT_PUBLIC_BASE_LINK}/${workspace.id}`
+                                    );
+                                    setOpen(true);
+                                }}
+                            >
+                                <Share1Icon />
+                            </IconButton>
+                        )}
+                    </Flex>
+                </Flex>
+
+                <CustomToast open={open} setOpen={setOpen} />
+            </Box>
+        </RoomProvider>
+    );
 };
 
 export default Home;
