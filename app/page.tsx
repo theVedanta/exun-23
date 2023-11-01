@@ -46,7 +46,7 @@ const Home = () => {
     return (
         <RoomProvider
             id={workspace ? workspace.id : "index-room"}
-            initialPresence={{ cursor: null, selectedId: null }}
+            initialPresence={{ cursor: null, selectedId: null, username:null, useremail:null }}
         >
             <Box
                 position="relative"

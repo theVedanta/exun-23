@@ -4,9 +4,11 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import { useEffect } from "react";
+import { useUpdateMyPresence } from "@/liveblocks.config";
 
 const Auth = () => {
     const { data: session } = useSession();
+    const updateMyPresence=useUpdateMyPresence()
 
     const assignUser = async (email: string) => {
         const dbref = doc(
@@ -26,6 +28,8 @@ const Auth = () => {
             session.user.email &&
             localStorage.getItem("workspace") &&
             assignUser(session.user.email);
+            
+        session && session.user && updateMyPresence({username: session.user.name, useremail: session.user.email});
     }, [session]);
 
     if (session && session.user) {

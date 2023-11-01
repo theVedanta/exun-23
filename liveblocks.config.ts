@@ -10,6 +10,8 @@ const client = createClient({
 type Presence = {
   cursor: { x: number, y: number } | null;
   selectedId: string | null;
+  username: string | null;
+  useremail: string | null;
 }
 
 // Pass client and Presence to createRoomContext & create React utilities

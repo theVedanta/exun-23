@@ -13,6 +13,9 @@ const COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
 interface Presence {
     cursor: { x: number; y: number } | null;
     selectedId: string | null;
+    
+  username: string | null;
+  useremail: string | null;
 }
 
 function Selections({ id }: { id: string }) {
@@ -29,18 +32,14 @@ function Selections({ id }: { id: string }) {
                     }: { connectionId: Number; presence: Presence },
                     i: Number
                 ) => {
-                    {
-                        /* {users.map(({ connectionId, presence }, i) => { */
-                    }
-                    // console.log(typeof connectionId);
 
                     if (presence.selectedId === id) {
                         return (
                             <Selection
                                 key={`${connectionId}`}
                                 name={
-                                    session && session.user
-                                        ? (session.user.name as string)
+                                    presence.username
+                                        ? (presence.username as string)
                                         : `Unknown ${i}`
                                 }
                                 color={COLORS[i as number]}
