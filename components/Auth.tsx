@@ -4,9 +4,11 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import { useEffect } from "react";
+import { useUpdateMyPresence } from "@/liveblocks.config";
 
 const Auth = () => {
     const { data: session } = useSession();
+    const updateMyPresence=useUpdateMyPresence()
 
     const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -35,6 +37,8 @@ const Auth = () => {
             session.user &&
             session.user.email &&
             assignUser(session.user.email);
+            
+        session && session.user && updateMyPresence({username: session.user.name, useremail: session.user.email});
     }, [session]);
 
     if (session && session.user) {

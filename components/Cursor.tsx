@@ -13,7 +13,7 @@ const CursorImage = () => (
 );
 
 // Give cursor absolute x/y positioning
-export default function Cursor({ x, y }: { x: number; y: number }) {
+export default function Cursor({ x, y,name }: { x: number; y: number,name:String }) {
 	const { data: session } = useSession();
 	return (
 		<div
@@ -43,7 +43,7 @@ export default function Cursor({ x, y }: { x: number; y: number }) {
 				}}
 			>
 				<Badge>
-					{session && session.user ? session.user.name : ""}
+					{name ? name : "Unknown"}
 				</Badge>
 			</div>
 		</div>
