@@ -54,20 +54,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
     };
 
     return (
-        <Box
-            position="fixed"
-            top="0"
-            left="0"
-            height="100%"
-            px="6"
-            py="6"
-            style={{
-                width: "20%",
-                borderRight: "2px solid black",
-                overflowY: "scroll",
-                zIndex: 10,
-            }}
-        >
+        <Box>
             <Heading>Notes</Heading>
             <hr />
 

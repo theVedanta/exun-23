@@ -1,7 +1,7 @@
 "use client";
 
 import db from "@/app/db";
-import createWorkspace from "@/utils";
+import { createWorkspace, makeID } from "@/utils";
 import { ArrowRightIcon, CaretDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { TextField } from "@radix-ui/themes";
 import { Dialog, Text } from "@radix-ui/themes";
@@ -21,9 +21,10 @@ const Workspaces = () => {
                 query(
                     collection(db, "workspaces"),
                     // @ts-ignore
-                    where("user", "==", session.user.email)
+                    where("owner", "==", session.user.email)
                 )
             );
+
             fetchedWs.forEach((d) =>
                 ws.push({ ...d.data(), id: d.id } as Workspace)
             );
@@ -56,6 +57,7 @@ const Workspaces = () => {
                     </Dialog.Trigger>
 
                     <DropdownMenu.Separator />
+
                     {workspaces.map((w, i) => (
                         <DropdownMenu.Item
                             onClick={() => {
@@ -119,7 +121,9 @@ const DialogBox = ({ session, setWorkspaces, workspaces }: any) => {
                                 ag,
                                 session && session.user && session.user.email
                                     ? session.user.email
-                                    : ""
+                                    : localStorage.getItem("temporary-user")
+                                    ? localStorage.getItem("temporary-user")
+                                    : makeID()
                             );
 
                             setWorkspaces([...workspaces, ws]);

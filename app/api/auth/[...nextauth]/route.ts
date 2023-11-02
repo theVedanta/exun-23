@@ -1,5 +1,3 @@
-import db from "@/app/db";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import NextAuth from "next-auth";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -11,6 +9,7 @@ const authOptions: NextAuthOptions = {
             clientSecret: <string>process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
         }),
     ],
+
     callbacks: {
         async signIn({ user }) {
             try {

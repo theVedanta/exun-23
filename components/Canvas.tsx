@@ -7,9 +7,9 @@ import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Button, Dialog, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
-import createWorkspace from "@/utils";
+import { createWorkspace, safeUserEmail } from "@/utils";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import Commands from "./Commands";
 
@@ -20,21 +20,17 @@ const Canvas = ({
     workspace: Workspace | undefined;
     getWorkspace: any;
 }) => {
-    const [user, setUser] = useState<User>();
     const constraintsRef = useRef(null);
     const { data: session } = useSession();
-    const [openAlert, setOpenAlert] = useState(false);
-    const [alertContent, setAlertContent] = useState("");
-
-    useEffect(() => {
-        session && session.user && setUser(session.user as User);
-    }, [session]);
 
     const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const agenda = e.target.value.trim();
+        const userEmail = safeUserEmail(session);
 
         if (workspace === undefined) {
-            await createWorkspace(agenda, user && user.email);
+            await createWorkspace(agenda, userEmail);
+
+            // To enable live update
             getWorkspace();
         } else {
             await updateDoc(doc(db, "workspaces", workspace.id), {
@@ -108,50 +104,11 @@ const Canvas = ({
                     style={{ position: "fixed", bottom: "30px" }}
                 >
                     <AddIdea workspace={workspace} />
-                    <Commands
-                        setOpenAlert={setOpenAlert}
-                        setAlertContent={setAlertContent}
-                        workspace={workspace}
-                    />
+                    <Commands workspace={workspace} />
                     <Auth />
                 </Flex>
-                <CustomDialog
-                    open={openAlert}
-                    setOpenAlert={setOpenAlert}
-                    alertContent={alertContent}
-                />
             </motion.div>
         </>
-    );
-};
-
-const CustomDialog = ({
-    open,
-    alertContent,
-    setOpenAlert,
-}: {
-    open: boolean;
-    alertContent: string;
-    setOpenAlert: any;
-}) => {
-    return (
-        <Dialog.Root open={open}>
-            <Dialog.Content style={{ maxWidth: 450 }}>
-                <Dialog.Title>Summary</Dialog.Title>
-                {alertContent}
-                <Flex gap="3" mt="4" justify="end">
-                    <Dialog.Close>
-                        <Button
-                            variant="soft"
-                            color="gray"
-                            onClick={() => setOpenAlert(false)}
-                        >
-                            Cancel
-                        </Button>
-                    </Dialog.Close>
-                </Flex>
-            </Dialog.Content>
-        </Dialog.Root>
     );
 };
 

@@ -50,7 +50,7 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
             </Dialog.Trigger>
 
             <Dialog.Content style={{ maxWidth: 450 }}>
-                <Dialog.Title>Create awesomeness</Dialog.Title>
+                <Dialog.Title>Add Idea</Dialog.Title>
 
                 <Flex direction="column" gap="3">
                     <label>
