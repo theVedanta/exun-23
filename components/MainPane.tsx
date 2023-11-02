@@ -10,7 +10,7 @@ import {
 } from "@radix-ui/themes";
 import { useState } from "react";
 import axios from "axios";
-import {DndProvider, useDrag} from 'react-dnd'
+import { DndProvider, useDrag } from "react-dnd";
 
 const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
     const [openAlert, setOpenAlert] = useState(false);
@@ -95,59 +95,60 @@ const UserBlock = ({
                 mt="4"
             >
                 {users.map((user) => (
-                    <UserTile  user={user} />
+                    <UserTile key={user.email} user={user} />
                 ))}
             </Box>
         </Box>
     );
 };
 
-const UserTile = ({user} : {user: { email: string; name: string }}) => {
-    const [{isDragging}, drag] = useDrag(() => ({
-        type:"card",
-        collect:(monitor) => ({
-            isDragging: !!monitor.isDragging()
+const UserTile = ({ user }: { user: { email: string; name: string } }) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+        type: "card",
+        collect: (monitor) => ({
+            isDragging: !!monitor.isDragging(),
         }),
-        item: {user}
-    }))
-    
-    return <div
-    style={{
-        display: "flex",
-        padding: "0.4rem",
-        alignItems: "center",
-        backgroundColor: "#f2f4fa",
-        borderRadius: "10px",
-        border:  isDragging? "2px solid red" :"1px solid #edf0fa",
-        cursor: "grab",
-    }}
-    key={user.email}
-    ref={drag}
+        item: { user },
+    }));
 
->
-    <Avatar
-        size="2"
-        fallback={user.name.charAt(0)}
-        mr="2"
-        // @ts-ignore
-        color={
-            [
-                "indigo",
-                "crimson",
-                "cyan",
-                "orange",
-                "blue",
-                "amber",
-                "bronze",
-                "brown",
-                "gold",
-                "tomato",
-            ][Math.round(Math.random() * 10)]
-        }
-    />
-    {user.name}
-</div>
-}
+    return (
+        <div
+            style={{
+                display: "flex",
+                padding: "0.4rem",
+                alignItems: "center",
+                backgroundColor: "#f2f4fa",
+                borderRadius: "10px",
+                border: isDragging ? "2px solid red" : "1px solid #edf0fa",
+                cursor: "grab",
+            }}
+            key={user.email}
+            ref={drag}
+        >
+            <Avatar
+                size="2"
+                fallback={user.name.charAt(0)}
+                mr="2"
+                // @ts-ignore
+                color={
+                    [
+                        "indigo",
+                        "crimson",
+                        "cyan",
+                        "orange",
+                        "blue",
+                        "amber",
+                        "bronze",
+                        "brown",
+                        "gold",
+                        "tomato",
+                    ][Math.round(Math.random() * 10)]
+                }
+            />
+            {user.name}
+        </div>
+    );
+};
 
 const Tile = ({ children, icon, func, disabled }: any) => {
     const [hover, setHover] = useState(false);
