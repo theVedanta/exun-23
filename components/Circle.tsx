@@ -1,5 +1,5 @@
 import { Flex } from "@radix-ui/themes";
-import { ChangeEvent, ReactNode, RefObject, useState } from "react";
+import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TextBox from "./TextBox";
 import IdeaInputBox from "./IdeaInputBox";
@@ -7,8 +7,20 @@ import { useXarrow } from "react-xarrows";
 import { useOthers, useUpdateMyPresence } from "@/liveblocks.config";
 import Selection from "./Selection";
 import { useSession } from "next-auth/react";
+import { useDrop } from "react-dnd";
 
-const COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
+const COLORS = [
+    "indigo",
+    "crimson",
+    "cyan",
+    "orange",
+    "blue",
+    "amber",
+    "bronze",
+    "brown",
+    "gold",
+    "tomato",
+]
 
 interface Presence {
     cursor: { x: number; y: number } | null;
@@ -20,7 +32,6 @@ interface Presence {
 
 function Selections({ id }: { id: string }) {
     const users = useOthers();
-    const { data: session } = useSession();
 
     return (
         <>
@@ -42,7 +53,7 @@ function Selections({ id }: { id: string }) {
                                         ? (presence.username as string)
                                         : `Unknown ${i}`
                                 }
-                                color={COLORS[i as number]}
+                                color={COLORS[Math.round(Math.random() * 10)]}
                             />
                         );
                     }
@@ -78,8 +89,17 @@ const Circle = ({
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
     const updateXarrow = useXarrow();
-
     const updateMyPresence = useUpdateMyPresence();
+    const [{isOver}, drop] = useDrop(() => ({
+        accept: "card",
+        drop: (item) => {
+            console.log(item);
+            
+        },
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver()
+        })
+    }))
 
     return (
         <motion.div
@@ -122,6 +142,7 @@ const Circle = ({
                 onClick={(e) => updateMyPresence({ selectedId: id })}
                 // onBlur={() => updateMyPresence({ selectedId: null })}
                 id={id}
+                ref={drop}
             >
                 {title.substring(0, 6)}
                 {title.length > 6 && "..."}

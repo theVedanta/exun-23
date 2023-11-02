@@ -14,6 +14,8 @@ import CursorPresence from "@/components/CursorPresence";
 import { RoomProvider } from "@/liveblocks.config";
 import CustomToast from "@/components/Toast";
 import LeftPane from "@/components/LeftPane";
+import {HTML5Backend} from 'react-dnd-html5-backend'
+import{DndProvider} from 'react-dnd'
 
 const Home = () => {
     const clipboard = useClipboard({ timeout: 2000 });
@@ -49,6 +51,8 @@ const Home = () => {
             id={workspace ? workspace.id : "index-room"}
             initialPresence={{ cursor: null, selectedId: null, username:null, useremail:null }}
         >
+                <DndProvider backend={HTML5Backend}>
+
             <Box
                 position="relative"
                 style={{
@@ -101,6 +105,8 @@ const Home = () => {
 
                 <CustomToast open={open} setOpen={setOpen} />
             </Box>
+            </DndProvider>
+
         </RoomProvider>
     );
 };
