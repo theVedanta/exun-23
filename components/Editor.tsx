@@ -14,6 +14,8 @@ interface Props {
     setCreated: any;
     setUser: any | null | undefined;
     name: string;
+    isEditorActive?: boolean;
+    isNotesEditor?: boolean;
 }
 
 export default function Editor({
@@ -25,30 +27,49 @@ export default function Editor({
     setCreated,
     setUser,
     name,
+    isEditorActive,
+    isNotesEditor = false,
 }: Props) {
     const holderRef = useRef(null);
     const { data: session } = useSession();
 
     //initialize editorjs
     useEffect(() => {
-        //initialize editor if we don't have a reference
-        if (holderRef.current && workspace && !created) {
-            if (setUser) {
-                setUser(getSafeUserEmail(session));
-            }
+      //initialize editor if we don't have a reference
+      if (holderRef.current && workspace && !created) {
+        console.log("hey");
 
-            editorRef.current = new EditorJS({
-                holder: holderRef.current,
-                tools: EDITOR_TOOLS,
-                data,
-                placeholder: "Start typing...",
-                onChange(api, event) {
-                    saveChanges();
-                },
-            });
-            setCreated(true);
+        if (setUser) {
+          setUser(getSafeUserEmail(session));
         }
-    }, [holderRef, workspace]);
+        editorRef.current = new EditorJS({
+          holder: holderRef.current,
+          tools: EDITOR_TOOLS,
+          data,
+          placeholder: "Start typing...",
+          onChange(api, event) {
+            saveChanges();
+          },
+        });
+        setCreated(true);
+      } else if (
+        holderRef.current &&
+        workspace &&
+        isEditorActive &&
+        !isNotesEditor
+      ) {
+        editorRef.current = new EditorJS({
+          holder: holderRef.current,
+          tools: EDITOR_TOOLS,
+          data,
+          placeholder: "Start typing...",
+          onChange(api, event) {
+            saveChanges();
+          },
+        });
+        setCreated(true);
+      }
+    }, [holderRef, workspace, isEditorActive]);
 
     return (
         <Box

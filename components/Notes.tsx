@@ -71,6 +71,7 @@ const Notes = ({ workspace }: { workspace: Workspace | undefined }) => {
                         ? workspace?.notes?.find((n) => n.email === user)?.notes
                         : undefined
                 }
+                isNotesEditor={true}
             />
         </Box>
     );
