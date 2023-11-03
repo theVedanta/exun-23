@@ -21,12 +21,12 @@ interface Idea {
     votes: string[]; // just the email of the person who voted for it
     notes: OutputData; // Only one note so no need of the user email
     comments: IdeaComment[];
+    users?: User[];
 }
 
 interface User {
     email: string;
     name: string;
-    ideas: string[];
 }
 
 interface IdeaComment {

@@ -1,5 +1,3 @@
-"use client";
-
 import { Flex, IconButton } from "@radix-ui/themes";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -78,7 +76,7 @@ interface Props {
     children?: ReactNode;
     onChange: (e: ChangeEvent<HTMLTextAreaElement>) => any;
     type: "textarea" | "notes";
-    idea: Idea | undefined;
+    idea?: Idea | undefined;
     id: string;
     isAgenda?: Boolean;
     workspace: Workspace | undefined;
@@ -106,37 +104,49 @@ const Circle = ({
     const updateXarrow = useXarrow();
     const updateMyPresence = useUpdateMyPresence();
     const { data: session } = useSession();
-    const user = getSafeUserEmail(session, localStorage);
     const [radius, setRadius] = useState("50%");
     const [color, setColor] = useState("#eaeefe");
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "card",
         drop: async (item: { user: User }) => {
+            const user = getSafeUserEmail(session);
+
             if (type === "notes" && workspace && user === workspace.owner) {
                 const wsRef = doc(db, "workspaces", workspace.id);
 
-                //  Assign all current workspace users
-                let updatedUsers = workspace.users ? workspace.users : [];
-                let draggedUserIndex = updatedUsers?.findIndex(
-                    (usr) => usr.email === item?.user.email
-                );
+                if (!idea) return;
 
-                // Check if idea already exists in ideas list in users object of the workspace
-                if (!updatedUsers[draggedUserIndex].ideas) {
-                    updatedUsers[draggedUserIndex].ideas = [idea?.id as string];
-                } else if (
-                    !updatedUsers[draggedUserIndex].ideas.includes(
-                        idea?.id as string
-                    )
-                ) {
-                    updatedUsers[draggedUserIndex].ideas.push(
-                        idea?.id as string
-                    );
+                let updatedIdeas = workspace.ideas as Idea[];
+                let ideaToUpdate = workspace.ideas?.find(
+                    (i) => i.id === idea.id
+                ) as Idea;
+
+                if (!ideaToUpdate?.users) {
+                    ideaToUpdate["users"] = [
+                        { email: item.user.email, name: item.user.name },
+                    ];
+
+                    return await updateDoc(wsRef, {
+                        ideas: updatedIdeas,
+                    });
                 }
 
+                // Check if user exists in this idea object
+                if (
+                    ideaToUpdate?.users.find(
+                        (usr) => usr.email === item.user.email
+                    )
+                )
+                    return;
+
+                ideaToUpdate?.users.push({
+                    email: item.user.email,
+                    name: item.user.name,
+                });
+
                 await updateDoc(wsRef, {
-                    users: updatedUsers,
+                    ideas: updatedIdeas,
                 });
             } else if (workspace && user !== workspace.owner) {
                 alert("You are not the workspace owner");

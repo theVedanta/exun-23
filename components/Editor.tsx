@@ -40,7 +40,7 @@ export default function Editor({
         console.log("hey");
 
         if (setUser) {
-          setUser(getSafeUserEmail(session, localStorage));
+          setUser(getSafeUserEmail(session));
         }
         editorRef.current = new EditorJS({
           holder: holderRef.current,
@@ -58,9 +58,6 @@ export default function Editor({
         isEditorActive &&
         !isNotesEditor
       ) {
-        if (setUser) {
-          setUser(getSafeUserEmail(session, localStorage));
-        }
         editorRef.current = new EditorJS({
           holder: holderRef.current,
           tools: EDITOR_TOOLS,
