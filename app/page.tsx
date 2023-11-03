@@ -53,6 +53,7 @@ const Home = () => {
                 selectedId: null,
                 username: null,
                 useremail: null,
+                usercolor: null,
             }}
         >
             <DndProvider backend={HTML5Backend}>
@@ -72,7 +73,7 @@ const Home = () => {
                             workspace={workspace}
                         />
                     </CursorPresence>
-                    
+
                     <Flex
                         justify="between"
                         align="center"

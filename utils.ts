@@ -30,6 +30,21 @@ export const getSafeUserEmail = (session: Session | null) => {
         : localStorage.getItem("temporary-user")
         ? (localStorage.getItem("temporary-user") as string)
         : makeID();
+};
 
-    return "";
+export const randomColor = () => {
+    const colors = [
+        "indigo",
+        "crimson",
+        "purple",
+        "orange",
+        "",
+        "amber",
+        "bronze",
+        "brown",
+        "gold",
+        "tomato",
+    ];
+
+    return colors[Math.round(Math.random() * 10)];
 };

@@ -91,7 +91,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                         let data = workspace ? await suggest(workspace) : "";
 
                         setLoading(false);
-                        if (!data) return;
+                        if (!data) return alert("Some error occurred");
 
                         setTitle("Suggestions");
                         setAlertContent(data);

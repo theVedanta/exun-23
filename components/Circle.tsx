@@ -9,14 +9,14 @@ import Selection from "./Selection";
 import { useDrop } from "react-dnd";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
-import { getSafeUserEmail } from "@/utils";
+import { getSafeUserEmail, randomColor } from "@/utils";
 import { useSession } from "next-auth/react";
 import { CircleIcon, SquareIcon } from "@radix-ui/react-icons";
 
 interface Presence {
     cursor: { x: number; y: number } | null;
     selectedId: string | null;
-
+    usercolor: string | null;
     username: string | null;
     useremail: string | null;
 }
@@ -43,7 +43,11 @@ function Selections({ id }: { id: string }) {
                                         ? (presence.username as string)
                                         : `Unknown ${i}`
                                 }
-                                color="indigo"
+                                color={
+                                    presence.usercolor
+                                        ? presence.usercolor
+                                        : "blue"
+                                }
                             />
                         );
                     }
@@ -88,7 +92,6 @@ const Circle = ({
     const updateMyPresence = useUpdateMyPresence();
     const { data: session } = useSession();
     const [radius, setRadius] = useState("50%");
-    const [color, setColor] = useState("#eaeefe");
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "card",
@@ -107,7 +110,10 @@ const Circle = ({
 
                 if (!ideaToUpdate?.users) {
                     ideaToUpdate["users"] = [
-                        { email: item.user.email, name: item.user.name },
+                        {
+                            email: item.user.email,
+                            name: item.user.name,
+                        },
                     ];
 
                     return await updateDoc(wsRef, {

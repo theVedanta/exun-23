@@ -132,7 +132,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                                 size="2"
                                 variant="surface"
                                 style={{ cursor: "pointer" }}
-                                color="red"
+                                color="amber"
                                 onClick={() => {
                                     setIsEditorActive(false);
                                 }}
@@ -205,9 +205,11 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                         style={{
                             position: "absolute",
                             top: "50%",
-                            right: "10px",
+                            right: "5px",
+                            width: "20px",
+                            height: "60px",
                         }}
-                        variant="ghost"
+                        variant="soft"
                         onClick={() =>
                             setCommentsOpen(commentsOpen ? false : true)
                         }

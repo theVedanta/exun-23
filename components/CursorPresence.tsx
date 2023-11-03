@@ -30,7 +30,10 @@ export default function CursorPresence({ children }: { children: any }) {
         }
 
         const { x, y } = presence.cursor;
-        return <Cursor key={connectionId} x={x} y={y} name={presence.username} />;
+
+        return (
+            <Cursor key={connectionId} x={x} y={y} name={presence.username} />
+        );
     };
 
     return (
