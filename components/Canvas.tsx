@@ -1,15 +1,13 @@
-"use client";
-
 import Circle from "./Circle";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useRef } from "react";
 import { motion } from "framer-motion";
 import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Flex } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
-import { createWorkspace, safeUserEmail } from "@/utils";
+import { createWorkspace, getSafeUserEmail } from "@/utils";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import Commands from "./Commands";
 
@@ -22,10 +20,11 @@ const Canvas = ({
 }) => {
     const constraintsRef = useRef(null);
     const { data: session } = useSession();
+    // const [reset, setReset] = useState(false);
 
     const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const agenda = e.target.value.trim();
-        const userEmail = safeUserEmail(session);
+        const userEmail = getSafeUserEmail(session);
 
         if (workspace === undefined) {
             await createWorkspace(agenda, userEmail);
@@ -39,6 +38,10 @@ const Canvas = ({
         }
     };
 
+    // useEffect(() => {
+    //     console.log(reset);
+    // }, [reset]);
+
     return (
         <>
             <motion.div
@@ -50,6 +53,7 @@ const Canvas = ({
                     alignItems: "center",
                 }}
                 ref={constraintsRef}
+                className="organize-wrapper"
             >
                 <Xwrapper>
                     <Circle
@@ -65,11 +69,11 @@ const Canvas = ({
                         {workspace && workspace.agenda}
                     </Circle>
 
-                    <Flex>
+                    <Flex className="organize-wrapper">
                         {workspace && workspace.ideas
-                            ? workspace.ideas.map((idea: Idea) => {
+                            ? workspace.ideas.map((idea: Idea, i) => {
                                   return (
-                                      <>
+                                      <React.Fragment key={i}>
                                           <Circle
                                               constraintsRef={constraintsRef}
                                               title={idea.name}
@@ -92,19 +96,24 @@ const Canvas = ({
                                               strokeWidth={2}
                                               curveness={0.6}
                                           />
-                                      </>
+                                      </React.Fragment>
                                   );
                               })
                             : null}
                     </Flex>
                 </Xwrapper>
+
                 <Flex
                     gap="5"
                     direction="row"
                     style={{ position: "fixed", bottom: "30px" }}
                 >
                     <AddIdea workspace={workspace} />
-                    <Commands workspace={workspace} />
+                    <Commands
+                        // setReset={setReset}
+                        // reset={reset}
+                        workspace={workspace}
+                    />
                     <Auth />
                 </Flex>
             </motion.div>

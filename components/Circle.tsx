@@ -1,3 +1,5 @@
+"use client";
+
 import { Flex } from "@radix-ui/themes";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -6,8 +8,11 @@ import IdeaInputBox from "./IdeaInputBox";
 import { useXarrow } from "react-xarrows";
 import { useOthers, useUpdateMyPresence } from "@/liveblocks.config";
 import Selection from "./Selection";
-import { useSession } from "next-auth/react";
 import { useDrop } from "react-dnd";
+import { doc, updateDoc } from "firebase/firestore";
+import db from "@/app/db";
+import { getSafeUserEmail } from "@/utils";
+import { useSession } from "next-auth/react";
 
 const COLORS = [
     "indigo",
@@ -20,14 +25,14 @@ const COLORS = [
     "brown",
     "gold",
     "tomato",
-]
+];
 
 interface Presence {
     cursor: { x: number; y: number } | null;
     selectedId: string | null;
-    
-  username: string | null;
-  useremail: string | null;
+
+    username: string | null;
+    useremail: string | null;
 }
 
 function Selections({ id }: { id: string }) {
@@ -43,7 +48,6 @@ function Selections({ id }: { id: string }) {
                     }: { connectionId: Number; presence: Presence },
                     i: Number
                 ) => {
-
                     if (presence.selectedId === id) {
                         return (
                             <Selection
@@ -90,23 +94,52 @@ const Circle = ({
     const [editing, setEditing] = useState(false);
     const updateXarrow = useXarrow();
     const updateMyPresence = useUpdateMyPresence();
-    const [{isOver}, drop] = useDrop(() => ({
+    const { data: session } = useSession();
+    const user = getSafeUserEmail(session);
+
+    const [{ isOver }, drop] = useDrop(() => ({
         accept: "card",
-        drop: (item) => {
-            console.log(item);
-            
+        drop: async (item: { user: User }) => {
+            if (type === "notes" && workspace && user === workspace.owner) {
+                const wsRef = doc(db, "workspaces", workspace.id);
+
+                //  Assign all current workspace users
+                let updatedUsers = workspace.users ? workspace.users : [];
+                let draggedUserIndex = updatedUsers?.findIndex(
+                    (usr) => usr.email === item?.user.email
+                );
+
+                // Check if idea already exists in ideas list in users object of the workspace
+                if (!updatedUsers[draggedUserIndex].ideas) {
+                    updatedUsers[draggedUserIndex].ideas = [idea?.id as string];
+                } else if (
+                    !updatedUsers[draggedUserIndex].ideas.includes(
+                        idea?.id as string
+                    )
+                ) {
+                    updatedUsers[draggedUserIndex].ideas.push(
+                        idea?.id as string
+                    );
+                }
+
+                await updateDoc(wsRef, {
+                    users: updatedUsers,
+                });
+            } else if (workspace && user !== workspace.owner) {
+                alert("You are not the workspace owner");
+            }
         },
         collect: (monitor) => ({
-            isOver: !!monitor.isOver()
-        })
-    }))
+            isOver: !!monitor.isOver(),
+        }),
+    }));
 
     return (
         <motion.div
             style={{
                 padding: "40px",
                 paddingTop: "100px",
-                zIndex: hover ? 12 : 5,
+                zIndex: hover ? 10 : 5,
             }}
             drag
             dragConstraints={constraintsRef}
@@ -145,7 +178,7 @@ const Circle = ({
                 ref={drop}
             >
                 {title.substring(0, 6)}
-                {title.length > 6 && "..."}
+                {title.length > 6 && ".."}
                 {hover &&
                     (type === "textarea" ? (
                         <TextBox

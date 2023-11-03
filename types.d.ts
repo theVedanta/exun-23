@@ -8,7 +8,7 @@ interface Workspace {
     agenda: string;
     ideas?: Idea[];
     notes?: NoteObject[];
-    users?: { email: string; name: string }[];
+    users?: User[];
     owner: string;
 }
 
@@ -20,4 +20,16 @@ interface Idea {
     description?: Object;
     votes: string[]; // just the email of the person who voted for it
     notes: OutputData; // Only one note so no need of the user email
+    comments: IdeaComment[];
+}
+
+interface User {
+    email: string;
+    name: string;
+    ideas: string[];
+}
+
+interface IdeaComment {
+    content: string;
+    user: { email: string; name: string };
 }

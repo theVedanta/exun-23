@@ -3,7 +3,7 @@ import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./EditerTools";
 import { Box, Text } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
-import { makeID, safeUserEmail } from "@/utils";
+import { makeID, getSafeUserEmail } from "@/utils";
 
 interface Props {
     data: any;
@@ -34,14 +34,14 @@ export default function Editor({
         //initialize editor if we don't have a reference
         if (holderRef.current && workspace && !created) {
             if (setUser) {
-                setUser(safeUserEmail(session));
+                setUser(getSafeUserEmail(session));
             }
 
             editorRef.current = new EditorJS({
                 holder: holderRef.current,
                 tools: EDITOR_TOOLS,
                 data,
-                placeholder: "Write your heart out...",
+                placeholder: "Start typing...",
                 onChange(api, event) {
                     saveChanges();
                 },
@@ -60,8 +60,7 @@ export default function Editor({
         >
             {!workspace && (
                 <Text style={{ color: "#666" }}>
-                    Please create a workspace by writing an Agenda or by signing
-                    in
+                    Please create a workspace by writing an Agenda or signing in
                 </Text>
             )}
         </Box>

@@ -1,12 +1,30 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Box, Flex, Heading, IconButton } from "@radix-ui/themes";
+import {
+    Avatar,
+    Box,
+    Button,
+    Flex,
+    Heading,
+    IconButton,
+    Popover,
+    Text,
+    TextArea,
+} from "@radix-ui/themes";
 import React, { useRef, useState } from "react";
 import { OutputData } from "@editorjs/editorjs";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
-import { TrashIcon } from "@radix-ui/react-icons";
+import {
+    ArrowRightIcon,
+    CaretLeftIcon,
+    CaretRightIcon,
+    ChatBubbleIcon,
+    TrashIcon,
+} from "@radix-ui/react-icons";
+import { getSafeUserEmail } from "@/utils";
+import { useSession } from "next-auth/react";
 const Editor = dynamic(() => import("./Editor"), {
     ssr: false,
 });
@@ -19,10 +37,12 @@ interface Props {
 const IdeaInputBox = ({ idea, workspace }: Props) => {
     const editorRef = useRef(null);
     const [created, setCreated] = useState(false);
+    const { data: session } = useSession();
+    const [commentsOpen, setCommentsOpen] = useState(false);
 
     const saveChanges = async () => {
         if (editorRef.current && workspace) {
-			// @ts-ignore
+            // @ts-ignore
             const outData: OutputData = await editorRef.current.save();
 
             const updatedIdeas = workspace.ideas?.map((item: Idea) => {
@@ -48,50 +68,217 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
         }
     };
 
-    return (
-        <Box
-            style={{
-                position: "absolute",
-                width: "400px",
-                maxHeight: "300px",
-                background: "#fff",
-                border: "2px solid #eaeefe",
-                top: "60%",
-                left: "60%",
-                padding: "28px",
-                borderRadius: "10px",
-                cursor: "text",
-                overflow: "scroll",
-                textAlign: "left",
-                resize: "both",
-            }}
-        >
-            <Flex justify="between">
-                <Heading style={{ fontSize: "19px", fontWeight: "600" }}>
-                    {idea.name}
-                </Heading>
-                <IconButton
-                    size="2"
-                    variant="soft"
-                    color="red"
-                    onClick={() => removeIdea()}
-                >
-                    <TrashIcon />
-                </IconButton>
-            </Flex>
-            <hr />
+    const comment = async (val: string) => {
+        const userEmail = getSafeUserEmail(session);
+        const userName =
+            session && session.user
+                ? (session.user.name as string)
+                : "Unknown coder";
 
-            <Editor
-                workspace={workspace}
-                name="idea"
-                editorRef={editorRef}
-                setUser={null}
-                setCreated={setCreated}
-                created={created}
-                saveChanges={saveChanges}
-                data={idea.notes}
-            />
-        </Box>
+        const comment: IdeaComment = {
+            content: val,
+            user: { email: userEmail, name: userName },
+        };
+
+        let updatedIdeas = workspace?.ideas;
+        let updatedIdea = updatedIdeas?.find((i) => i.id === idea.id) as Idea;
+
+        if (updatedIdea?.comments.length !== 0) {
+            updatedIdea.comments.push(comment);
+        } else {
+            updatedIdea["comments"] = [comment];
+        }
+
+        setCommentsOpen(true);
+
+        await updateDoc(doc(db, "workspaces", workspace?.id as string), {
+            ideas: updatedIdeas,
+        });
+    };
+
+    return (
+        <Flex>
+            <Box
+                style={{
+                    position: "absolute",
+                    width: "500px",
+                    maxHeight: "400px",
+                    background: "#fff",
+                    border: "2px solid #eaeefe",
+                    top: "60%",
+                    left: "60%",
+                    padding: "28px",
+                    borderRadius: "10px",
+                    cursor: "text",
+                    overflow: "scroll",
+                    textAlign: "left",
+                }}
+            >
+                <Flex justify="between" align="center">
+                    <Heading style={{ fontSize: "1.4rem", fontWeight: "600" }}>
+                        {idea.name}
+                    </Heading>
+
+                    <Flex>
+                        <CommentBox
+                            onClick={comment}
+                            user={
+                                session && session.user
+                                    ? (session.user.name as string)[0]
+                                    : "0"
+                            }
+                        />
+
+                        <IconButton
+                            size="2"
+                            variant="surface"
+                            style={{ cursor: "pointer" }}
+                            color="red"
+                            onClick={() => removeIdea()}
+                        >
+                            <TrashIcon />
+                        </IconButton>
+                    </Flex>
+                </Flex>
+                <hr />
+
+                <Editor
+                    workspace={workspace}
+                    name="idea"
+                    editorRef={editorRef}
+                    setUser={null}
+                    setCreated={setCreated}
+                    created={created}
+                    saveChanges={saveChanges}
+                    data={idea.notes}
+                />
+
+                {idea.comments && idea.comments.length !== 0 && (
+                    <IconButton
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            right: "10px",
+                        }}
+                        variant="ghost"
+                        onClick={() =>
+                            setCommentsOpen(commentsOpen ? false : true)
+                        }
+                    >
+                        {commentsOpen ? <CaretLeftIcon /> : <CaretRightIcon />}
+                    </IconButton>
+                )}
+            </Box>
+
+            {idea.comments && commentsOpen && (
+                <Box
+                    style={{
+                        position: "absolute",
+                        width: "500px",
+                        maxHeight: "400px",
+                        background: "#fff",
+                        border: "2px solid #eaeefe",
+                        top: "60%",
+                        left: "720%",
+                        padding: "28px",
+                        borderRadius: "10px",
+                        cursor: "text",
+                        overflow: "scroll",
+                        textAlign: "left",
+                    }}
+                >
+                    <Heading style={{ fontSize: "1.4rem", fontWeight: "600" }}>
+                        Comments
+                    </Heading>
+                    <hr />
+
+                    {idea.comments.map((comment, i) => (
+                        <Box
+                            key={i}
+                            style={{
+                                marginTop: "14px",
+                                background: "#f2f3f7",
+                                borderRadius: "10px",
+                                padding: "8px",
+                            }}
+                        >
+                            <Flex mb="2">
+                                <Avatar
+                                    fallback={comment.user.name[0]}
+                                    mr="3"
+                                />
+                                <Box>
+                                    <Heading size="3" style={{ color: "" }}>
+                                        {comment.user.name}
+                                    </Heading>
+                                    <Text size="2" style={{ opacity: 0.6 }}>
+                                        {comment.user.email}
+                                    </Text>
+                                </Box>
+                            </Flex>
+
+                            <Text
+                                size="3"
+                                style={{
+                                    padding: "6px",
+                                    display: "inline-block",
+                                }}
+                            >
+                                {comment.content}
+                            </Text>
+                        </Box>
+                    ))}
+                </Box>
+            )}
+        </Flex>
+    );
+};
+
+const CommentBox = ({ onClick, user }: any) => {
+    return (
+        <Popover.Root>
+            <Popover.Trigger>
+                <IconButton
+                    mr="2"
+                    size="2"
+                    variant="surface"
+                    style={{ cursor: "pointer" }}
+                >
+                    <ChatBubbleIcon />
+                </IconButton>
+            </Popover.Trigger>
+
+            <Popover.Content style={{ width: 360 }}>
+                <Flex gap="3">
+                    <Avatar size="2" fallback={user} radius="full" />
+                    <Box grow="1">
+                        <TextArea
+                            placeholder="Write a comment…"
+                            style={{ height: 80 }}
+                            id="comment-box"
+                        />
+                        <Flex gap="3" mt="3" justify="end">
+                            <Popover.Close>
+                                <Button
+                                    onClick={() =>
+                                        onClick(
+                                            (
+                                                document.querySelector(
+                                                    "#comment-box"
+                                                ) as HTMLTextAreaElement
+                                            ).value.trim()
+                                        )
+                                    }
+                                    size="1"
+                                >
+                                    Comment
+                                </Button>
+                            </Popover.Close>
+                        </Flex>
+                    </Box>
+                </Flex>
+            </Popover.Content>
+        </Popover.Root>
     );
 };
 

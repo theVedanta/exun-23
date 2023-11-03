@@ -7,6 +7,8 @@ import {
     Flex,
     Grid,
     Heading,
+    Kbd,
+    Tooltip,
 } from "@radix-ui/themes";
 import { useState } from "react";
 import axios from "axios";
@@ -20,7 +22,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
 
     const summarise = async (workspace: Workspace) => {
         const res = await axios.post(`/api/summarise`, { workspace });
-        console.log(res);
+        console.log(res.data.msg);
 
         return res.data.msg;
     };
@@ -63,11 +65,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
     );
 };
 
-const UserBlock = ({
-    users = [],
-}: {
-    users: { email: string; name: string }[] | undefined;
-}) => {
+const UserBlock = ({ users = [] }: { users: User[] | undefined }) => {
     return (
         <Box
             p="4"
@@ -92,7 +90,7 @@ const UserBlock = ({
                     overflow: "scroll",
                     height: "100%",
                 }}
-                mt="4"
+                mt="1"
             >
                 {users.map((user) => (
                     <UserTile key={user.email} user={user} />
@@ -102,7 +100,7 @@ const UserBlock = ({
     );
 };
 
-const UserTile = ({ user }: { user: { email: string; name: string } }) => {
+const UserTile = ({ user }: { user: User }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "card",
         collect: (monitor) => ({
@@ -112,41 +110,31 @@ const UserTile = ({ user }: { user: { email: string; name: string } }) => {
     }));
 
     return (
-        <div
+        <Flex
             style={{
-                display: "flex",
                 padding: "0.4rem",
-                alignItems: "center",
                 backgroundColor: "#f2f4fa",
                 borderRadius: "10px",
                 border: isDragging ? "2px solid red" : "1px solid #edf0fa",
                 cursor: "grab",
+                marginTop: "10px",
             }}
             key={user.email}
+            align="center"
+            justify="between"
             ref={drag}
         >
-            <Avatar
-                size="2"
-                fallback={user.name.charAt(0)}
-                mr="2"
-                // @ts-ignore
-                color={
-                    [
-                        "indigo",
-                        "crimson",
-                        "cyan",
-                        "orange",
-                        "blue",
-                        "amber",
-                        "bronze",
-                        "brown",
-                        "gold",
-                        "tomato",
-                    ][Math.round(Math.random() * 10)]
-                }
-            />
-            {user.name}
-        </div>
+            <Flex align="center">
+                <Avatar size="2" fallback={user.name.charAt(0)} mr="2" />
+                {user.name}
+            </Flex>
+
+            {user.ideas && user.ideas.length !== 0 && (
+                <Tooltip content="Ideas involved in">
+                    <Kbd size="5">{user.ideas.length}</Kbd>
+                </Tooltip>
+            )}
+        </Flex>
     );
 };
 

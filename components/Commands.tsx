@@ -1,7 +1,15 @@
 import { CaretUpIcon } from "@radix-ui/react-icons";
 import { Button, DropdownMenu } from "@radix-ui/themes";
 
-const Commands = ({ workspace }: { workspace: Workspace | undefined }) => {
+const Commands = ({
+    workspace,
+}: // reset,
+// setReset,
+{
+    workspace: Workspace | undefined;
+    // reset: boolean;
+    // setReset: any;
+}) => {
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -12,7 +20,12 @@ const Commands = ({ workspace }: { workspace: Workspace | undefined }) => {
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content>
-                <DropdownMenu.Item shortcut="⌘L">
+                <DropdownMenu.Item
+                    onClick={() => {
+                        // setReset(reset ? false : true);
+                    }}
+                    shortcut="⌘L"
+                >
                     Organize Workspace
                 </DropdownMenu.Item>
                 {/* <DropdownMenu.Item
