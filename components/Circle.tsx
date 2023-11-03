@@ -1,5 +1,5 @@
 import { Flex } from "@radix-ui/themes";
-import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, RefObject, useState } from "react";
 import { motion } from "framer-motion";
 import TextBox from "./TextBox";
 import IdeaInputBox from "./IdeaInputBox";

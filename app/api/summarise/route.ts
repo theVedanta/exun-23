@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 
     console.log("processing...");
 
-    let prompt = `We're working on ${workspace.agenda} and so far we have come up with the following ideas:\n`;
+    let prompt = `We're working on ${workspace.agenda} and so far we have come up with the following ideas: \n`;
 
     for (let i = 0; i < workspace.ideas.length; i++) {
         const idea = workspace.ideas[i];
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
             });
         }
 
-        prompt += ideaLine;
+        prompt += ideaLine + "\n";
     }
 
     console.log(prompt);
