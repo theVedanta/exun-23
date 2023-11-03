@@ -16,6 +16,7 @@ interface Props {
     name: string;
     isEditorActive?: boolean;
     isNotesEditor?: boolean;
+    title:string | null;
 }
 
 export default function Editor({
@@ -29,6 +30,7 @@ export default function Editor({
     name,
     isEditorActive,
     isNotesEditor = false,
+    title
 }: Props) {
     const holderRef = useRef(null);
     const { data: session } = useSession();
@@ -55,7 +57,6 @@ export default function Editor({
       } else if (
         holderRef.current &&
         workspace &&
-        isEditorActive &&
         !isNotesEditor
       ) {
         editorRef.current = new EditorJS({
@@ -71,6 +72,7 @@ export default function Editor({
       }
     }, [holderRef, workspace, isEditorActive]);
 
+
     return (
         <Box
             style={{
@@ -84,6 +86,7 @@ export default function Editor({
                     Please create a workspace by writing an Agenda or signing in
                 </Text>
             )}
+            {title && <h1>{title}</h1>}
         </Box>
     );
 }
