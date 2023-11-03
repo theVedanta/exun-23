@@ -1,25 +1,50 @@
 export async function POST(request: Request) {
     const { workspace } = await request.json();
 
-    const response = await fetch(
-        "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta",
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.NEXT_PUBLIC_HUGGING_FACE}`,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({
-                // inputs: `We need to make a product on this topic (ignore any links in the following text): "${workspace.agenda}". Suggest 3 ideas.`,
-                inputs: `Suggest 3 ideas for a blockchain app`,
-            }),
+    console.log("processing...");
+
+    let token = process.env.NEXT_PUBLIC_HUGGING_FACE;
+
+    let prompt = `Suggest 3 ideas for the topic: '${workspace.agenda}.'`;
+    let genText = ``;
+
+    const requestAPI = async () => {
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    inputs: prompt + genText,
+                    parameters: {
+                        return_full_text: false,
+                    },
+                }),
+            }
+        );
+
+        if (response.ok) return await response.json();
+        else if (!response.ok) {
+            if (response.statusText === "Too Many Requests") {
+                token = process.env.NEXT_PUBLIC_HUGGING_FACE2;
+                requestAPI();
+            }
+            return { done: true };
         }
-    );
+    };
 
-    if (!response.ok) return console.log(await response.json());
+    while (true) {
+        const result: any = await requestAPI();
 
-    const result = await response.json();
-    console.log(result);
+        if (result.done) break;
 
-    return Response.json({ data: "hello" });
+        genText += result[0].generated_text;
+    }
+
+    console.log(genText);
+
+    return Response.json({ msg: genText });
 }

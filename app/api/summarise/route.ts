@@ -1,5 +1,3 @@
-import { OutputBlockData, OutputData } from "@editorjs/editorjs";
-
 export async function POST(request: Request) {
     const { workspace }: { workspace: Workspace } = await request.json();
     if (!workspace || !workspace.ideas) return;
@@ -21,13 +19,6 @@ export async function POST(request: Request) {
         prompt += ideaLine + "\n";
     }
 
-    console.log(prompt);
-
-    // for (let index = 0; index < workspace.ideas.length; index++) {
-    //     prompt = prompt.concat(`
-    //     ${index})${workspace.ideas[index].name}:${workspace.ideas[index].description}`);
-    // }
-
     const response = await fetch(
         "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
         {
@@ -40,7 +31,10 @@ export async function POST(request: Request) {
             }),
         }
     );
+
     const result = await response.json();
+
+    console.log(result);
 
     return Response.json({ msg: result[0]["summary_text"] });
 }

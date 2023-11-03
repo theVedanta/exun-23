@@ -11,20 +11,41 @@ import {
     Tooltip,
 } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { DndProvider, useDrag } from "react-dnd";
+import { useDrag } from "react-dnd";
 
 const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
     const [openAlert, setOpenAlert] = useState(false);
     const [alertContent, setAlertContent] = useState("");
     const [title, setTitle] = useState("");
     const [loading, setLoading] = useState(false);
+    const [big, setBig] = useState(false);
 
     const summarise = async (workspace: Workspace) => {
-        const res = await axios.post(`/api/summarise`, { workspace });
-        console.log(res.data.msg);
+        try {
+            const res = await fetch("/api/summarise", {
+                method: "POST",
+                body: JSON.stringify({ workspace }),
+            });
 
-        return res.data.msg;
+            const data = await res.json();
+            return data.msg;
+        } catch (err) {
+            alert("Some error occurred");
+        }
+    };
+
+    const suggest = async (workspace: Workspace) => {
+        try {
+            const res = await fetch("/api/suggest", {
+                method: "POST",
+                body: JSON.stringify({ workspace }),
+            });
+
+            const data = await res.json();
+            return data.msg;
+        } catch (err) {
+            alert("Some error occurred");
+        }
     };
 
     return (
@@ -37,17 +58,32 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                         setLoading(true);
                         let data = workspace ? await summarise(workspace) : "";
 
+                        setLoading(false);
+                        if (!data) return;
+
                         setTitle("Summary");
                         setAlertContent(data);
                         setOpenAlert(true);
-                        setLoading(false);
+                        setBig(false);
                     }}
                 >
-                    Summarise
+                    Summarise {loading && "coding"}
                 </Tile>
                 <Tile
                     disabled={workspace || !loading ? false : true}
                     icon={<BarChartIcon />}
+                    func={async () => {
+                        setLoading(true);
+                        let data = workspace ? await suggest(workspace) : "";
+
+                        setLoading(false);
+                        if (!data) return;
+
+                        setTitle("Suggestions");
+                        setAlertContent(data);
+                        setOpenAlert(true);
+                        setBig(true);
+                    }}
                 >
                     Suggest
                 </Tile>
@@ -57,6 +93,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                     open={openAlert}
                     setOpenAlert={setOpenAlert}
                     alertContent={alertContent}
+                    big={big}
                 />
             </Grid>
 
@@ -208,15 +245,17 @@ const CustomDialog = ({
     alertContent,
     setOpenAlert,
     title,
+    big,
 }: {
     open: boolean;
     alertContent: string;
     setOpenAlert: any;
     title: string;
+    big: boolean;
 }) => {
     return (
         <Dialog.Root open={open}>
-            <Dialog.Content style={{ maxWidth: 450 }}>
+            <Dialog.Content style={{ maxWidth: big ? 650 : 450 }}>
                 <Dialog.Title>{title}</Dialog.Title>
                 {alertContent}
                 <Flex gap="3" mt="4" justify="end">
