@@ -3,7 +3,7 @@ export async function POST(request: Request) {
 
     console.log("processing...");
 
-    let token = process.env.NEXT_PUBLIC_HUGGING_FACE2;
+    let token = process.env.NEXT_PUBLIC_HUGGING_FACE;
 
     let prompt = `Suggest 3 ideas for the topic: '${workspace.agenda}.'`;
     let genText = ``;
