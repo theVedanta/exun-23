@@ -3,12 +3,15 @@ import { Button, DropdownMenu } from "@radix-ui/themes";
 
 const Commands = ({
     workspace,
-}: // reset,
-// setReset,
+    animationControls,
+    setIsCustomizeToolActive,
+    setReset
+}:
 {
     workspace: Workspace | undefined;
-    // reset: boolean;
-    // setReset: any;
+    animationControls: any;
+    setIsCustomizeToolActive:any;
+    setReset:any;
 }) => {
     return (
         <DropdownMenu.Root>
@@ -22,18 +25,22 @@ const Commands = ({
             <DropdownMenu.Content>
                 <DropdownMenu.Item
                     onClick={() => {
-                        // setReset(reset ? false : true);
+                        animationControls.set({
+                            x:0,
+                            y:0,
+                          })
+                          setReset(true)
                     }}
                     shortcut="⌘L"
                 >
                     Organize Workspace
                 </DropdownMenu.Item>
-                {/* <DropdownMenu.Item
-                    onClick={() => workspace && suggest(workspace)}
+                <DropdownMenu.Item
+                    onClick={() => setIsCustomizeToolActive((prev:boolean)=>!prev)}
                     shortcut="⌘D"
                 >
-                    Suggest themes
-                </DropdownMenu.Item> */}
+                    Customize
+                </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
     );

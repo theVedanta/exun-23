@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex } from "@radix-ui/themes";
+import { Flex, IconButton } from "@radix-ui/themes";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TextBox from "./TextBox";
@@ -13,6 +13,11 @@ import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import { getSafeUserEmail } from "@/utils";
 import { useSession } from "next-auth/react";
+import {
+  CircleIcon,
+  ColorWheelIcon,
+  SquareIcon,
+} from "@radix-ui/react-icons";
 
 const COLORS = [
     "indigo",
@@ -77,6 +82,9 @@ interface Props {
     id: string;
     isAgenda?: Boolean;
     workspace: Workspace | undefined;
+    dragControls: any;
+    animationControls: any;
+    isCustomizeToolActive: boolean;
 }
 
 const Circle = ({
@@ -89,6 +97,9 @@ const Circle = ({
     id,
     isAgenda = false,
     workspace,
+    dragControls,
+    animationControls,
+    isCustomizeToolActive,
 }: Props) => {
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
@@ -96,6 +107,8 @@ const Circle = ({
     const updateMyPresence = useUpdateMyPresence();
     const { data: session } = useSession();
     const user = getSafeUserEmail(session, localStorage);
+    const [radius, setRadius] = useState("50%");
+    const [color, setColor] = useState("#eaeefe");
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "card",
@@ -142,6 +155,8 @@ const Circle = ({
                 zIndex: hover ? 10 : 5,
             }}
             drag
+      dragControls={dragControls}
+      animate={animationControls}
             dragConstraints={constraintsRef}
             dragMomentum={false}
             onDrag={() => {
@@ -160,7 +175,7 @@ const Circle = ({
                 style={{
                     width: isAgenda ? "140px" : "80px",
                     height: isAgenda ? "140px" : "80px",
-                    borderRadius: "50%",
+                    borderRadius: radius,
                     transition: "all 0.3s",
                     background: "#eaeefe",
                     border: children ? "2px solid #6a80d9" : "",
@@ -173,10 +188,62 @@ const Circle = ({
                     setEditing(false);
                 }}
                 onClick={(e) => updateMyPresence({ selectedId: id })}
-                // onBlur={() => updateMyPresence({ selectedId: null })}
                 id={id}
                 ref={drop}
-            >
+      >
+              {isCustomizeToolActive && (
+                <Flex
+                  style={{
+                    position: "absolute",
+                    top: "-35px",
+                    left: "50%",
+                    background: "white",
+                    boxShadow: "1px 2px 5px rgba(0,0,0,0.2)",
+                    padding: "5px",
+                  }}
+                  gap="1"
+                >
+                  <IconButton
+                    size="1"
+                    variant="surface"
+                    style={{ cursor: "pointer" }}
+                    color="gray"
+                    onClick={() => setRadius("5px")}
+                  >
+                    <SquareIcon />
+                  </IconButton>
+                  <IconButton
+                    size="1"
+                    variant="surface"
+                    style={{ cursor: "pointer" }}
+                    color="gray"
+                    onClick={() => setRadius("50%")}
+                  >
+                    <CircleIcon />
+                  </IconButton>
+                  <IconButton
+                    size="1"
+                    variant="surface"
+                    style={{ cursor: "pointer", position: "relative" }}
+                    color="gray"
+                  >
+                    <ColorWheelIcon />
+                    <input
+                      type="color"
+                      onChange={(e) => setColor(e.target.value)}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        opacity: 0,
+                      }}
+                    />
+                  </IconButton>
+                </Flex>
+              )}
+
                 {title.substring(0, 6)}
                 {title.length > 6 && ".."}
                 {hover &&

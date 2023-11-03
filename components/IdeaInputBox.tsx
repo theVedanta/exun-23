@@ -12,7 +12,7 @@ import {
     Text,
     TextArea,
 } from "@radix-ui/themes";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { OutputData } from "@editorjs/editorjs";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
@@ -39,6 +39,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
     const [created, setCreated] = useState(false);
     const { data: session } = useSession();
     const [commentsOpen, setCommentsOpen] = useState(false);
+    const [isEditorActive, setIsEditorActive] = useState(true);
 
     const saveChanges = async () => {
         if (editorRef.current && workspace) {
@@ -83,7 +84,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
         let updatedIdeas = workspace?.ideas;
         let updatedIdea = updatedIdeas?.find((i) => i.id === idea.id) as Idea;
 
-        if (updatedIdea?.comments.length !== 0) {
+        if (updatedIdea?.comments && updatedIdea.comments.length!== 0) {
             updatedIdea.comments.push(comment);
         } else {
             updatedIdea["comments"] = [comment];
@@ -119,7 +120,19 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                         {idea.name}
                     </Heading>
 
-                    <Flex>
+                    <Flex gap='2'>
+                        <IconButton
+                            size="2"
+                            variant="surface"
+                            style={{ cursor: "pointer" }}
+                            color={isEditorActive ? "red" : 'blue'}
+                            onClick={() => {
+                                setIsEditorActive(isEditorActive ? false : true)
+                            }}
+                        >
+                            {/* <TrashIcon /> */}
+                            😔
+                        </IconButton>
                         <CommentBox
                             onClick={comment}
                             user={
@@ -141,17 +154,21 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                     </Flex>
                 </Flex>
                 <hr />
-
-                <Editor
-                    workspace={workspace}
-                    name="idea"
-                    editorRef={editorRef}
-                    setUser={null}
-                    setCreated={setCreated}
-                    created={created}
-                    saveChanges={saveChanges}
-                    data={idea.notes}
-                />
+                    {
+                        isEditorActive ? 
+                        <Editor
+                            workspace={workspace}
+                            name="idea"
+                            editorRef={editorRef}
+                            setUser={null}
+                            setCreated={setCreated}
+                            created={created}
+                            saveChanges={saveChanges}
+                            data={idea.notes}
+                            isEditorActive={isEditorActive}
+                        /> : 
+                        <h1>Problems in {idea.name}</h1>
+                    }
 
                 {idea.comments && idea.comments.length !== 0 && (
                     <IconButton
@@ -239,7 +256,6 @@ const CommentBox = ({ onClick, user }: any) => {
         <Popover.Root>
             <Popover.Trigger>
                 <IconButton
-                    mr="2"
                     size="2"
                     variant="surface"
                     style={{ cursor: "pointer" }}

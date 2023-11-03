@@ -1,6 +1,6 @@
 import Circle from "./Circle";
-import React, { ChangeEvent, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { ChangeEvent, useRef, useState } from "react";
+import { motion, useAnimationControls, useDragControls } from "framer-motion";
 import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
@@ -8,7 +8,7 @@ import Auth from "./Auth";
 import { Box, Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import { createWorkspace, getSafeUserEmail } from "@/utils";
-import Xarrow, { Xwrapper } from "react-xarrows";
+import Xarrow, { Xwrapper, useXarrow } from "react-xarrows";
 import Commands from "./Commands";
 
 const Canvas = ({
@@ -20,7 +20,8 @@ const Canvas = ({
 }) => {
     const constraintsRef = useRef(null);
     const { data: session } = useSession();
-    // const [reset, setReset] = useState(false);
+    const [isCustomizeToolActive, setIsCustomizeToolActive] = useState(false);
+    const [reset, setReset] = useState(false);
 
     const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const agenda = e.target.value.trim();
@@ -37,11 +38,9 @@ const Canvas = ({
             });
         }
     };
-
-    // useEffect(() => {
-    //     console.log(reset);
-    // }, [reset]);
-
+    const dragControls = useDragControls();
+    const animationControls = useAnimationControls();
+    
     return (
         <>
             <motion.div
@@ -65,6 +64,9 @@ const Canvas = ({
                         idea={undefined}
                         id="agenda"
                         isAgenda
+                        dragControls={dragControls}
+                        animationControls={animationControls}
+                        isCustomizeToolActive={isCustomizeToolActive}
                     >
                         {workspace && workspace.agenda}
                     </Circle>
@@ -84,6 +86,9 @@ const Canvas = ({
                                               idea={idea}
                                               id={idea.id}
                                               workspace={workspace}
+                                              dragControls={dragControls}
+                                              animationControls={animationControls}
+                                              isCustomizeToolActive={isCustomizeToolActive}
                                           >
                                               {idea.name}
                                           </Circle>
@@ -110,9 +115,10 @@ const Canvas = ({
                 >
                     <AddIdea workspace={workspace} />
                     <Commands
-                        // setReset={setReset}
-                        // reset={reset}
                         workspace={workspace}
+                        animationControls={animationControls}
+                        setIsCustomizeToolActive={setIsCustomizeToolActive}
+                        setReset={setReset}
                     />
                     <Auth />
                 </Flex>
