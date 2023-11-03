@@ -28,6 +28,9 @@ import { useSession } from "next-auth/react";
 const Editor = dynamic(() => import("./Editor"), {
     ssr: false,
 });
+const Editor2 = dynamic(() => import("./Editor"), {
+    ssr: false,
+});
 
 interface Props {
     idea: Idea;
@@ -36,6 +39,7 @@ interface Props {
 
 const IdeaInputBox = ({ idea, workspace }: Props) => {
     const editorRef = useRef(null);
+    const consRef = useRef(null);
     const [created, setCreated] = useState(false);
     const { data: session } = useSession();
     const [commentsOpen, setCommentsOpen] = useState(false);
@@ -166,8 +170,20 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                             saveChanges={saveChanges}
                             data={idea.notes}
                             isEditorActive={isEditorActive}
+                            title={null}
                         /> : 
-                        <h1>Problems in {idea.name}</h1>
+                        <Editor2
+                            workspace={workspace}
+                            name="idea"
+                            editorRef={consRef}
+                            setUser={null}
+                            setCreated={setCreated}
+                            created={created}
+                            saveChanges={saveChanges}
+                            data={idea.notes}
+                            isEditorActive={isEditorActive}
+                            title={`Problems in ${idea.name}`}
+                        /> 
                     }
 
                 {idea.comments && idea.comments.length !== 0 && (

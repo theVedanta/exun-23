@@ -214,7 +214,7 @@ const Circle = ({
                             variant="surface"
                             style={{ cursor: "pointer" }}
                             color="gray"
-                            onClick={() => setRadius("5px")}
+                            onClick={() => setRadius("10px")}
                         >
                             <SquareIcon />
                         </IconButton>
