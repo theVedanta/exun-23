@@ -71,7 +71,7 @@ export default function Editor({
             )}
 
             {title && (
-                <Heading size="4" mt="3">
+                <Heading size="4" color="red" mt="3">
                     {title}
                 </Heading>
             )}

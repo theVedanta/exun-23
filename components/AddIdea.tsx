@@ -59,8 +59,8 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
                         </Text>
                         <TextField.Input
                             id="idea-name"
-                            placeholder="Name your idea..."
-                            maxLength={40}
+                            placeholder="Name your idea... (Max. 25 chars)"
+                            maxLength={25}
                         />
                     </label>
                     <label>
@@ -69,7 +69,7 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
                         </Text>
                         <TextArea
                             id="idea-description"
-                            placeholder="Enter some basic description..."
+                            placeholder="Enter some basic description... (Mainly for AI)"
                         />
                     </label>
                 </Flex>
