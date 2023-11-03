@@ -28,6 +28,9 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
             });
 
             const data = await res.json();
+            if (data.err) {
+                alert("Some error occurred");
+            }
             return data.msg;
         } catch (err) {
             alert("Some error occurred");
@@ -42,6 +45,9 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
             });
 
             const data = await res.json();
+            if (data.err) {
+                alert("Some error occurred");
+            }
             return data.msg;
         } catch (err) {
             alert("Some error occurred");
@@ -50,7 +56,15 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
 
     return (
         <>
-            <Grid columns="2" gap="3" width="auto">
+            <Grid
+                columns="2"
+                gap="3"
+                width="auto"
+                style={{
+                    opacity: loading ? 0.5 : 1,
+                    pointerEvents: loading ? "none" : "all",
+                }}
+            >
                 <Tile
                     disabled={workspace || !loading ? false : true}
                     icon={<TextIcon />}
@@ -67,7 +81,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                         setBig(false);
                     }}
                 >
-                    Summarise {loading && "coding"}
+                    Summarise
                 </Tile>
                 <Tile
                     disabled={workspace || !loading ? false : true}
@@ -257,7 +271,12 @@ const CustomDialog = ({
         <Dialog.Root open={open}>
             <Dialog.Content style={{ maxWidth: big ? 650 : 450 }}>
                 <Dialog.Title>{title}</Dialog.Title>
-                {alertContent}
+                <hr />
+                <br />
+                <div style={{ whiteSpace: "pre-line" }}>
+                    {alertContent.trim()}
+                </div>
+
                 <Flex gap="3" mt="4" justify="end">
                     <Dialog.Close>
                         <Button

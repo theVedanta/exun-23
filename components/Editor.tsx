@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./EditerTools";
-import { Box, Text } from "@radix-ui/themes";
+import { Box, Heading, Text } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
-import { makeID, getSafeUserEmail } from "@/utils";
+import { getSafeUserEmail } from "@/utils";
 
 interface Props {
     data: any;
@@ -13,10 +13,9 @@ interface Props {
     created: boolean;
     setCreated: any;
     setUser: any | null | undefined;
-    name: string;
+    name?: string;
+    title?: string | null;
     isEditorActive?: boolean;
-    isNotesEditor?: boolean;
-    title:string | null;
 }
 
 export default function Editor({
@@ -28,50 +27,34 @@ export default function Editor({
     setCreated,
     setUser,
     name,
-    isEditorActive,
-    isNotesEditor = false,
-    title
+    title = null,
 }: Props) {
     const holderRef = useRef(null);
     const { data: session } = useSession();
 
     //initialize editorjs
     useEffect(() => {
-      //initialize editor if we don't have a reference
-      if (holderRef.current && workspace && !created) {
-        console.log("hey");
+        //initialize editor if we don't have a reference
+        if (holderRef.current && workspace && !created) {
+            console.log("hey");
 
-        if (setUser) {
-          setUser(getSafeUserEmail(session));
+            if (setUser) {
+                setUser(getSafeUserEmail(session));
+            }
+
+            editorRef.current = new EditorJS({
+                holder: holderRef.current,
+                tools: EDITOR_TOOLS,
+                data,
+                placeholder: "Start typing...",
+                onChange(api, event) {
+                    saveChanges();
+                },
+            });
+
+            setCreated(true);
         }
-        editorRef.current = new EditorJS({
-          holder: holderRef.current,
-          tools: EDITOR_TOOLS,
-          data,
-          placeholder: "Start typing...",
-          onChange(api, event) {
-            saveChanges();
-          },
-        });
-        setCreated(true);
-      } else if (
-        holderRef.current &&
-        workspace &&
-        !isNotesEditor
-      ) {
-        editorRef.current = new EditorJS({
-          holder: holderRef.current,
-          tools: EDITOR_TOOLS,
-          data,
-          placeholder: "Start typing...",
-          onChange(api, event) {
-            saveChanges();
-          },
-        });
-        setCreated(true);
-      }
-    }, [holderRef, workspace, isEditorActive]);
-
+    }, [holderRef, workspace]);
 
     return (
         <Box
@@ -86,7 +69,12 @@ export default function Editor({
                     Please create a workspace by writing an Agenda or signing in
                 </Text>
             )}
-            {title && <h1>{title}</h1>}
+
+            {title && (
+                <Heading size="4" mt="3">
+                    {title}
+                </Heading>
+            )}
         </Box>
     );
 }

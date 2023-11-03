@@ -60,6 +60,7 @@ const AddIdea = ({ workspace }: { workspace: Workspace | undefined }) => {
                         <TextField.Input
                             id="idea-name"
                             placeholder="Name your idea..."
+                            maxLength={40}
                         />
                     </label>
                     <label>

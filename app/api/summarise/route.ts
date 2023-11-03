@@ -33,7 +33,6 @@ export async function POST(request: Request) {
     );
 
     const result = await response.json();
-
     console.log(result);
 
     return Response.json({ msg: result[0]["summary_text"] });

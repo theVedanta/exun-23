@@ -3,7 +3,7 @@ export async function POST(request: Request) {
 
     console.log("processing...");
 
-    let token = process.env.NEXT_PUBLIC_HUGGING_FACE;
+    let token = process.env.NEXT_PUBLIC_HUGGING_FACE2;
 
     let prompt = `Suggest 3 ideas for the topic: '${workspace.agenda}.'`;
     let genText = ``;
@@ -27,19 +27,18 @@ export async function POST(request: Request) {
         );
 
         if (response.ok) return await response.json();
-        else if (!response.ok) {
-            if (response.statusText === "Too Many Requests") {
-                token = process.env.NEXT_PUBLIC_HUGGING_FACE2;
-                requestAPI();
-            }
-            return { done: true };
-        }
+        else return { done: true };
     };
 
     while (true) {
         const result: any = await requestAPI();
 
+        if (result === undefined)
+            return Response.json({ err: "Some error occurred" });
         if (result.done) break;
+        if (result[0].generated_text === "") break;
+
+        console.log(result);
 
         genText += result[0].generated_text;
     }
