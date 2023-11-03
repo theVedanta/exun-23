@@ -24,7 +24,7 @@ const Canvas = ({
 
     const editAgenda = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const agenda = e.target.value.trim();
-        const userEmail = getSafeUserEmail(session, localStorage);
+        const userEmail = getSafeUserEmail(session);
 
         if (workspace === undefined) {
             await createWorkspace(agenda, userEmail);

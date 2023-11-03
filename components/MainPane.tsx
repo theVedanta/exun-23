@@ -10,7 +10,7 @@ import {
     Kbd,
     Tooltip,
 } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { DndProvider, useDrag } from "react-dnd";
 
@@ -60,12 +60,23 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                 />
             </Grid>
 
-            {workspace && <UserBlock users={workspace.users} />}
+            {workspace && (
+                <UserBlock
+                    ideas={workspace.ideas ? workspace.ideas : []}
+                    users={workspace.users}
+                />
+            )}
         </>
     );
 };
 
-const UserBlock = ({ users = [] }: { users: User[] | undefined }) => {
+const UserBlock = ({
+    users = [],
+    ideas,
+}: {
+    users: User[] | undefined;
+    ideas: Idea[];
+}) => {
     return (
         <Box
             p="4"
@@ -93,14 +104,14 @@ const UserBlock = ({ users = [] }: { users: User[] | undefined }) => {
                 mt="1"
             >
                 {users.map((user) => (
-                    <UserTile key={user.email} user={user} />
+                    <UserTile ideas={ideas} key={user.email} user={user} />
                 ))}
             </Box>
         </Box>
     );
 };
 
-const UserTile = ({ user }: { user: User }) => {
+const UserTile = ({ user, ideas }: { user: User; ideas: Idea[] }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "card",
         collect: (monitor) => ({
@@ -108,6 +119,18 @@ const UserTile = ({ user }: { user: User }) => {
         }),
         item: { user },
     }));
+    const [inv, setInv] = useState(0);
+
+    useEffect(() => {
+        let ideasInvolvedIn = 0;
+        for (let idea of ideas) {
+            idea.users?.forEach((usr) => {
+                if (usr.email === user.email) ideasInvolvedIn += 1;
+            });
+        }
+
+        setInv(ideasInvolvedIn);
+    }, [ideas, user.email]);
 
     return (
         <Flex
@@ -129,11 +152,9 @@ const UserTile = ({ user }: { user: User }) => {
                 {user.name}
             </Flex>
 
-            {user.ideas && user.ideas.length !== 0 && (
-                <Tooltip content="Ideas involved in">
-                    <Kbd size="5">{user.ideas.length}</Kbd>
-                </Tooltip>
-            )}
+            <Tooltip content="Ideas involved in">
+                <Kbd size="5">{inv}</Kbd>
+            </Tooltip>
         </Flex>
     );
 };

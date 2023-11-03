@@ -24,10 +24,7 @@ export const makeID = () => {
     return newID;
 };
 
-export const getSafeUserEmail = (
-    session: Session | null,
-    localStorage: Storage
-) => {
+export const getSafeUserEmail = (session: Session | null) => {
     return session && session.user && session.user.email
         ? session.user.email
         : localStorage.getItem("temporary-user")
