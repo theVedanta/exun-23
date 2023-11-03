@@ -95,7 +95,7 @@ const Circle = ({
     const updateXarrow = useXarrow();
     const updateMyPresence = useUpdateMyPresence();
     const { data: session } = useSession();
-    const user = getSafeUserEmail(session);
+    const user = getSafeUserEmail(session, localStorage);
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "card",

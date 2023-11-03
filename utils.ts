@@ -24,14 +24,15 @@ export const makeID = () => {
     return newID;
 };
 
-export const getSafeUserEmail = (session: Session | null) => {
-    if (localStorage) {
-        return session && session.user && session.user.email
-            ? session.user.email
-            : localStorage.getItem("temporary-user")
-            ? (localStorage.getItem("temporary-user") as string)
-            : makeID();
-    }
+export const getSafeUserEmail = (
+    session: Session | null,
+    localStorage: Storage
+) => {
+    return session && session.user && session.user.email
+        ? session.user.email
+        : localStorage.getItem("temporary-user")
+        ? (localStorage.getItem("temporary-user") as string)
+        : makeID();
 
     return "";
 };

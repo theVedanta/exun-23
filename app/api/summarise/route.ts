@@ -2,7 +2,10 @@ export async function POST(request: Request) {
     const { workspace } = await request.json();
 
     // let prompt = `I am trying to brainstorm for my project and I have an agenda or a goal that I want to achieve and also a list of thoughts or half ideas that are somewhat connected and may lead to a good idea. Help me to summarise all this into a short, conside form so I can be productive. My agenda is ${workspace.agenda}. Here are some ideas that are connected to this agenda`;
-    let prompt = `We're working on a Brainstorming app for the EXUN Hackathon and so far we have come up with the following ideas`;
+    let prompt = `We're working on a Brainstorming app for the EXUN Hackathon and so far we have come up with the following ideas:
+1. Create a Notes app
+2. Make some type of Brainstorming and task management platform for all users in order to have easy collaboration
+3. Make a good and easy-to-use Dashboard application and have DAO functionalities`;
 
     // for (let index = 0; index < workspace.ideas.length; index++) {
     //     prompt = prompt.concat(`

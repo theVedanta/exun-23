@@ -69,7 +69,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
     };
 
     const comment = async (val: string) => {
-        const userEmail = getSafeUserEmail(session);
+        const userEmail = getSafeUserEmail(session, localStorage);
         const userName =
             session && session.user
                 ? (session.user.name as string)

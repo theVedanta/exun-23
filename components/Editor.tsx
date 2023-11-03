@@ -34,7 +34,7 @@ export default function Editor({
         //initialize editor if we don't have a reference
         if (holderRef.current && workspace && !created) {
             if (setUser) {
-                setUser(getSafeUserEmail(session));
+                setUser(getSafeUserEmail(session, localStorage));
             }
 
             editorRef.current = new EditorJS({
