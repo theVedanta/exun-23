@@ -11,20 +11,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import { getSafeUserEmail } from "@/utils";
 import { useSession } from "next-auth/react";
-import { CircleIcon, ColorWheelIcon, SquareIcon } from "@radix-ui/react-icons";
-
-const COLORS = [
-    "indigo",
-    "crimson",
-    "cyan",
-    "orange",
-    "blue",
-    "amber",
-    "bronze",
-    "brown",
-    "gold",
-    "tomato",
-];
+import { CircleIcon, SquareIcon } from "@radix-ui/react-icons";
 
 interface Presence {
     cursor: { x: number; y: number } | null;
@@ -56,7 +43,7 @@ function Selections({ id }: { id: string }) {
                                         ? (presence.username as string)
                                         : `Unknown ${i}`
                                 }
-                                color={COLORS[Math.round(Math.random() * 10)]}
+                                color="indigo"
                             />
                         );
                     }
@@ -202,50 +189,31 @@ const Circle = ({
                         style={{
                             position: "absolute",
                             top: "-35px",
-                            left: "50%",
+                            left: "-20%",
                             background: "white",
                             boxShadow: "1px 2px 5px rgba(0,0,0,0.2)",
                             padding: "5px",
+                            borderRadius: "8px",
                         }}
                         gap="1"
                     >
                         <IconButton
-                            size="1"
+                            size="2"
                             variant="surface"
                             style={{ cursor: "pointer" }}
-                            color="gray"
                             onClick={() => setRadius("10px")}
+                            color="gold"
                         >
                             <SquareIcon />
                         </IconButton>
                         <IconButton
-                            size="1"
+                            size="2"
                             variant="surface"
                             style={{ cursor: "pointer" }}
-                            color="gray"
+                            color="gold"
                             onClick={() => setRadius("50%")}
                         >
                             <CircleIcon />
-                        </IconButton>
-                        <IconButton
-                            size="1"
-                            variant="surface"
-                            style={{ cursor: "pointer", position: "relative" }}
-                            color="gray"
-                        >
-                            <ColorWheelIcon />
-                            <input
-                                type="color"
-                                onChange={(e) => setColor(e.target.value)}
-                                style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    opacity: 0,
-                                }}
-                            />
                         </IconButton>
                     </Flex>
                 )}

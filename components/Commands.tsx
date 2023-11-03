@@ -7,13 +7,12 @@ const Commands = ({
     workspace,
     animationControls,
     setIsCustomizeToolActive,
-    setReset
-}:
-{
+    setReset,
+}: {
     workspace: Workspace | undefined;
     animationControls: any;
-    setIsCustomizeToolActive:any;
-    setReset:any;
+    setIsCustomizeToolActive: any;
+    setReset: any;
 }) => {
     return (
         <DropdownMenu.Root>
@@ -28,10 +27,10 @@ const Commands = ({
                 <DropdownMenu.Item
                     onClick={() => {
                         animationControls.set({
-                            x:0,
-                            y:0,
-                          })
-                          setReset(true)
+                            x: 0,
+                            y: 0,
+                        });
+                        setReset(true);
                     }}
                     shortcut="⌘L"
                 >
@@ -53,7 +52,9 @@ const Commands = ({
                     Delete all Ideas
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
-                    onClick={() => setIsCustomizeToolActive((prev:boolean)=>!prev)}
+                    onClick={() =>
+                        setIsCustomizeToolActive((prev: boolean) => !prev)
+                    }
                     shortcut="⌘D"
                 >
                     Customize
