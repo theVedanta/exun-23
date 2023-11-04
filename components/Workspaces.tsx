@@ -24,10 +24,24 @@ const Workspaces = () => {
                     where("owner", "==", session.user.email)
                 )
             );
-
             fetchedWs.forEach((d) =>
                 ws.push({ ...d.data(), id: d.id } as Workspace)
             );
+
+            const fetchedWs2 = await getDocs(collection(db, "workspaces"));
+            fetchedWs2.forEach(
+                (w) =>
+                    w.data().users &&
+                    w
+                        .data()
+                        .users.find(
+                            (usr: User) => usr.email === session?.user?.email
+                        ) &&
+                    !ws.find((wss) => wss.id === w.id) &&
+                    ws.push({ ...w.data(), id: w.id } as Workspace)
+            );
+
+            console.log(ws);
 
             setWorkspaces(ws);
         };

@@ -144,8 +144,18 @@ const UserBlock = ({
     ideas: Idea[];
     workspace: Workspace;
 }) => {
-    const [userManager, setUserManager] = useState(false);
     const { data: session } = useSession();
+    const user = getSafeUserEmail(session);
+
+    let userIdeas: Idea[] = [];
+    for (let idea of ideas) {
+        if (idea.users) {
+            if (idea.users.find((usr) => usr.email === user))
+                userIdeas.push(idea);
+        }
+    }
+
+    console.log(userIdeas);
 
     return (
         <Box
@@ -169,12 +179,7 @@ const UserBlock = ({
                 {workspace.owner !== getSafeUserEmail(session) && (
                     <Dialog.Root>
                         <Dialog.Trigger>
-                            <IconButton
-                                variant="soft"
-                                onClick={() =>
-                                    setUserManager(userManager ? false : true)
-                                }
-                            >
+                            <IconButton variant="soft">
                                 <OpenInNewWindowIcon />
                             </IconButton>
                         </Dialog.Trigger>
@@ -185,9 +190,6 @@ const UserBlock = ({
                                 Manage your idea statuses here and update
                                 livetime!
                             </Dialog.Description>
-
-
-                            
 
                             <Flex gap="3" mt="4" justify="end">
                                 <Dialog.Close>
@@ -200,8 +202,6 @@ const UserBlock = ({
                     </Dialog.Root>
                 )}
             </Flex>
-
-            {userManager && <UserManager />}
 
             <Box
                 style={{
@@ -221,10 +221,6 @@ const UserBlock = ({
             </Box>
         </Box>
     );
-};
-
-const UserManager = () => {
-    return <></>;
 };
 
 const UserTile = ({
