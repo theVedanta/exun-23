@@ -1,3 +1,5 @@
+"use client";
+
 import { Flex, IconButton } from "@radix-ui/themes";
 import { ChangeEvent, ReactNode, RefObject, useState } from "react";
 import { motion } from "framer-motion";
@@ -7,9 +9,9 @@ import { useXarrow } from "react-xarrows";
 import { useOthers, useUpdateMyPresence } from "@/liveblocks.config";
 import Selection from "./Selection";
 import { useDrop } from "react-dnd";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
-import { getSafeUserEmail, randomColor } from "@/utils";
+import { getSafeUserEmail } from "@/utils";
 import { useSession } from "next-auth/react";
 import { CircleIcon, SquareIcon } from "@radix-ui/react-icons";
 
@@ -99,46 +101,44 @@ const Circle = ({
             const user = getSafeUserEmail(session);
 
             if (type === "notes" && workspace && user === workspace.owner) {
-                const wsRef = doc(db, "workspaces", workspace.id);
-
                 if (!idea) return;
 
-                let updatedIdeas = workspace.ideas as Idea[];
-                let ideaToUpdate = workspace.ideas?.find(
-                    (i) => i.id === idea.id
-                ) as Idea;
+                const wsRef = doc(db, "workspaces", workspace.id);
 
-                if (!ideaToUpdate?.users) {
-                    ideaToUpdate["users"] = [
-                        {
-                            email: item.user.email,
-                            name: item.user.name,
-                        },
-                    ];
+                const ws = await getDoc(wsRef);
+                if (!ws.exists()) return;
 
-                    return await updateDoc(wsRef, {
-                        ideas: updatedIdeas,
-                    });
-                }
+                let updatedIdeas = ws.data().ideas;
 
-                // Check if user exists in this idea object
-                if (
-                    ideaToUpdate?.users.find(
-                        (usr) => usr.email === item.user.email
-                    )
-                )
-                    return;
-
-                ideaToUpdate?.users.push({
+                const userObj = {
                     email: item.user.email,
                     name: item.user.name,
-                });
+                };
+
+                for (let dea of updatedIdeas) {
+                    if (dea.id === idea.id) {
+                        if (!dea.users) {
+                            dea["users"] = [userObj];
+                            break;
+                        }
+
+                        const userFound = dea.users?.find(
+                            (usr: User) => usr.email === item.user.email
+                        );
+                        if (userFound) return;
+
+                        dea.users.push(userObj);
+                        break;
+                    }
+                }
 
                 await updateDoc(wsRef, {
                     ideas: updatedIdeas,
                 });
             } else if (workspace && user !== workspace.owner) {
-                alert("You are not the workspace owner");
+                alert(
+                    "You are not the workspace owner. If you think this is an error, please refresh."
+                );
             }
         },
         collect: (monitor) => ({
@@ -150,7 +150,7 @@ const Circle = ({
         <motion.div
             style={{
                 padding: "40px",
-                paddingTop: "100px",
+                paddingTop: "50px",
                 zIndex: hover ? 10 : 5,
             }}
             drag
@@ -207,7 +207,7 @@ const Circle = ({
                             size="2"
                             variant="surface"
                             style={{ cursor: "pointer" }}
-                            onClick={() => setRadius("10px")}
+                            onClick={() => setRadius("16px")}
                             color="gold"
                         >
                             <SquareIcon />

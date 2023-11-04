@@ -5,10 +5,10 @@ import AddIdea from "./AddIdea";
 import { doc, updateDoc } from "firebase/firestore";
 import db from "@/app/db";
 import Auth from "./Auth";
-import { Box, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import { createWorkspace, getSafeUserEmail } from "@/utils";
-import Xarrow, { Xwrapper, useXarrow } from "react-xarrows";
+import Xarrow, { Xwrapper } from "react-xarrows";
 import Commands from "./Commands";
 
 const Canvas = ({
@@ -40,7 +40,7 @@ const Canvas = ({
     };
     const dragControls = useDragControls();
     const animationControls = useAnimationControls();
-    
+
     return (
         <>
             <motion.div
@@ -87,8 +87,12 @@ const Canvas = ({
                                               id={idea.id}
                                               workspace={workspace}
                                               dragControls={dragControls}
-                                              animationControls={animationControls}
-                                              isCustomizeToolActive={isCustomizeToolActive}
+                                              animationControls={
+                                                  animationControls
+                                              }
+                                              isCustomizeToolActive={
+                                                  isCustomizeToolActive
+                                              }
                                           >
                                               {idea.name}
                                           </Circle>

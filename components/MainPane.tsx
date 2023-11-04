@@ -1,15 +1,28 @@
-import { BarChartIcon, TextIcon } from "@radix-ui/react-icons";
+import db from "@/app/db";
+import { getSafeUserEmail } from "@/utils";
+import {
+    BarChartIcon,
+    Cross1Icon,
+    OpenInNewWindowIcon,
+    TextIcon,
+} from "@radix-ui/react-icons";
 import {
     Avatar,
+    Badge,
     Box,
     Button,
     Dialog,
     Flex,
     Grid,
     Heading,
+    HoverCard,
+    IconButton,
     Kbd,
+    Text,
     Tooltip,
 } from "@radix-ui/themes";
+import { doc, updateDoc } from "firebase/firestore";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 
@@ -113,6 +126,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
 
             {workspace && (
                 <UserBlock
+                    workspace={workspace}
                     ideas={workspace.ideas ? workspace.ideas : []}
                     users={workspace.users}
                 />
@@ -124,10 +138,15 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
 const UserBlock = ({
     users = [],
     ideas,
+    workspace,
 }: {
     users: User[] | undefined;
     ideas: Idea[];
+    workspace: Workspace;
 }) => {
+    const [userManager, setUserManager] = useState(false);
+    const { data: session } = useSession();
+
     return (
         <Box
             p="4"
@@ -137,15 +156,52 @@ const UserBlock = ({
                 minHeight: "72%",
             }}
         >
-            <Heading
+            <Flex
                 style={{
                     borderBottom: "2px solid #edf0fa",
-                    paddingBottom: "10px",
+                    paddingBottom: "8px",
                 }}
-                size="5"
+                justify="between"
+                width="100%"
             >
-                Users
-            </Heading>
+                <Heading size="5">Users</Heading>
+
+                {workspace.owner !== getSafeUserEmail(session) && (
+                    <Dialog.Root>
+                        <Dialog.Trigger>
+                            <IconButton
+                                variant="soft"
+                                onClick={() =>
+                                    setUserManager(userManager ? false : true)
+                                }
+                            >
+                                <OpenInNewWindowIcon />
+                            </IconButton>
+                        </Dialog.Trigger>
+
+                        <Dialog.Content style={{ maxWidth: 600 }}>
+                            <Dialog.Title>Users section</Dialog.Title>
+                            <Dialog.Description size="2" mb="4">
+                                Manage your idea statuses here and update
+                                livetime!
+                            </Dialog.Description>
+
+
+                            
+
+                            <Flex gap="3" mt="4" justify="end">
+                                <Dialog.Close>
+                                    <Button variant="soft" color="gray">
+                                        Close
+                                    </Button>
+                                </Dialog.Close>
+                            </Flex>
+                        </Dialog.Content>
+                    </Dialog.Root>
+                )}
+            </Flex>
+
+            {userManager && <UserManager />}
 
             <Box
                 style={{
@@ -155,14 +211,31 @@ const UserBlock = ({
                 mt="1"
             >
                 {users.map((user) => (
-                    <UserTile ideas={ideas} key={user.email} user={user} />
+                    <UserTile
+                        workspace={workspace}
+                        ideas={ideas}
+                        key={user.email}
+                        user={user}
+                    />
                 ))}
             </Box>
         </Box>
     );
 };
 
-const UserTile = ({ user, ideas }: { user: User; ideas: Idea[] }) => {
+const UserManager = () => {
+    return <></>;
+};
+
+const UserTile = ({
+    user,
+    ideas,
+    workspace,
+}: {
+    user: User;
+    ideas: Idea[];
+    workspace: Workspace;
+}) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "card",
         collect: (monitor) => ({
@@ -170,13 +243,14 @@ const UserTile = ({ user, ideas }: { user: User; ideas: Idea[] }) => {
         }),
         item: { user },
     }));
-    const [inv, setInv] = useState(0);
+
+    const [inv, setInv] = useState<Idea[]>([]);
 
     useEffect(() => {
-        let ideasInvolvedIn = 0;
+        let ideasInvolvedIn: Idea[] = [];
         for (let idea of ideas) {
             idea.users?.forEach((usr) => {
-                if (usr.email === user.email) ideasInvolvedIn += 1;
+                if (usr.email === user.email) ideasInvolvedIn.push(idea);
             });
         }
 
@@ -184,29 +258,101 @@ const UserTile = ({ user, ideas }: { user: User; ideas: Idea[] }) => {
     }, [ideas, user.email]);
 
     return (
-        <Flex
-            style={{
-                padding: "0.4rem",
-                backgroundColor: "#f2f4fa",
-                borderRadius: "10px",
-                border: isDragging ? "2px solid red" : "1px solid #edf0fa",
-                cursor: "grab",
-                marginTop: "10px",
-            }}
-            key={user.email}
-            align="center"
-            justify="between"
-            ref={drag}
-        >
-            <Flex align="center">
-                <Avatar size="2" fallback={user.name.charAt(0)} mr="2" />
-                {user.name}
-            </Flex>
+        <HoverCard.Root>
+            <HoverCard.Trigger>
+                <Flex
+                    style={{
+                        padding: "0.4rem",
+                        backgroundColor: "#f2f4fa",
+                        borderRadius: "10px",
+                        border: isDragging
+                            ? "2px solid red"
+                            : "1px solid #edf0fa",
+                        cursor: "grab",
+                        marginTop: "10px",
+                    }}
+                    key={user.email}
+                    align="center"
+                    justify="between"
+                    ref={drag}
+                >
+                    <Flex align="center">
+                        <Avatar
+                            size="2"
+                            fallback={user.name.charAt(0)}
+                            mr="2"
+                        />
+                        {user.name}
+                    </Flex>
 
-            <Tooltip content="Ideas involved in">
-                <Kbd size="5">{inv}</Kbd>
-            </Tooltip>
-        </Flex>
+                    <Tooltip content="Ideas involved in">
+                        <Kbd size="5">{inv.length}</Kbd>
+                    </Tooltip>
+                </Flex>
+            </HoverCard.Trigger>
+
+            {inv.length !== 0 && (
+                <HoverCard.Content size="3" style={{ width: "300px" }}>
+                    <Heading size="2">Ideas assigned to {user.name}:</Heading>
+                    <hr />
+
+                    {inv.map((d) => (
+                        <Badge
+                            style={{
+                                marginTop: "6px",
+                                padding: "6px 10px",
+                            }}
+                            key={d.id}
+                        >
+                            <Flex
+                                align="center"
+                                style={{ marginRight: "10px" }}
+                            >
+                                <Box
+                                    style={{
+                                        width: "12px",
+                                        height: "12px",
+                                        borderRadius: "50%",
+                                        background: "red",
+                                        marginRight: "10px",
+                                    }}
+                                ></Box>
+                                <Text size="2">{d.name}</Text>
+                            </Flex>
+
+                            <IconButton
+                                color="red"
+                                size="1"
+                                variant="ghost"
+                                onClick={async () => {
+                                    let ideasToUpdate = ideas;
+                                    let ideaToUpdate = ideas.find(
+                                        (ide) => ide.id === d.id
+                                    ) as Idea;
+
+                                    ideaToUpdate.users =
+                                        ideaToUpdate.users?.filter(
+                                            (usr) => usr.email !== user.email
+                                        );
+
+                                    await updateDoc(
+                                        doc(
+                                            db,
+                                            "workspaces",
+                                            workspace.id as string
+                                        ),
+
+                                        { ideas: ideasToUpdate }
+                                    );
+                                }}
+                            >
+                                <Cross1Icon />
+                            </IconButton>
+                        </Badge>
+                    ))}
+                </HoverCard.Content>
+            )}
+        </HoverCard.Root>
     );
 };
 
@@ -219,7 +365,7 @@ const Tile = ({ children, icon, func, disabled }: any) => {
             variant="soft"
             style={{
                 borderRadius: "10px",
-                height: "160px",
+                height: "100%",
                 padding: "20px",
                 paddingTop: "20px",
                 paddingBottom: "20px",
@@ -249,7 +395,10 @@ const Tile = ({ children, icon, func, disabled }: any) => {
             >
                 {icon}
             </Box>
-            <Heading size="3">{children}</Heading>
+
+            <Heading style={{ marginTop: "60%" }} size="3">
+                {children}
+            </Heading>
         </Button>
     );
 };
