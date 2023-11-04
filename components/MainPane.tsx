@@ -176,7 +176,7 @@ const UserBlock = ({
             >
                 <Heading size="5">Users</Heading>
 
-                {workspace.owner !== getSafeUserEmail(session) && (
+                {/* {workspace.owner !== getSafeUserEmail(session) && (
                     <Dialog.Root>
                         <Dialog.Trigger>
                             <IconButton variant="soft">
@@ -200,7 +200,7 @@ const UserBlock = ({
                             </Flex>
                         </Dialog.Content>
                     </Dialog.Root>
-                )}
+                )} */}
             </Flex>
 
             <Box
