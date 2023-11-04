@@ -197,6 +197,7 @@ const IdeaInputBox = ({ idea, workspace }: Props) => {
                         saveChanges={() => saveChanges(consRef, true)}
                         data={idea.cons}
                         title={`Disadvantages:`}
+                        idea={idea}
                     />
                 )}
 

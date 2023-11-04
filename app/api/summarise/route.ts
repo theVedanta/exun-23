@@ -19,7 +19,7 @@ export async function POST(request: Request) {
         prompt += ideaLine + "\n";
     }
 
-    if (prompt.length < 50)
+    if (prompt.length < 200)
         return Response.json({
             msg: "Please explain more details in your workspace.",
         });

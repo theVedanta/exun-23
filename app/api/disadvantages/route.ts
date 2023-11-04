@@ -1,12 +1,20 @@
 export async function POST(request: Request) {
-    const { workspace } = await request.json();
+    const { idea }: { idea: Idea } = await request.json();
 
     console.log("processing...");
 
     let token = process.env.NEXT_PUBLIC_HUGGING_FACE;
 
-    let prompt = `Suggest 3 ideas for the topic: '${workspace.agenda}.'`;
+    let prompt = `We have an idea: ${idea.name}. However, it has the following issues:\n`;
     let genText = ``;
+
+    if (idea.cons) {
+        idea.cons.blocks.map((block: any, i: number) => {
+            prompt += `${i + 1}. ${block.data.text}.\n`;
+        });
+    }
+
+    prompt += "\n\nSuggest some solutions to all of these issues.";
 
     const requestAPI = async () => {
         const response = await fetch(
@@ -28,7 +36,10 @@ export async function POST(request: Request) {
         );
 
         if (response.ok) return await response.json();
-        else return { done: true };
+        else {
+            console.log(response);
+            return { done: true };
+        }
     };
 
     while (true) {
