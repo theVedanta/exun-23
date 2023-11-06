@@ -59,6 +59,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 fontSize: "1rem",
                 textAlign: "left",
                 overflow: "auto",
+                whiteSpace: "pre-line"
             }}
             onClick={() => {
                 setEditing(true);
