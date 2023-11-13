@@ -48,7 +48,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
             style={{
                 position: "absolute",
                 width: "400px",
-                minHeight: "300px",
+                maxHeight: "300px",
                 background: "#fff",
                 border: "2px solid #eaeefe",
                 top: "60%",
@@ -58,8 +58,8 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 cursor: "text",
                 fontSize: "1rem",
                 textAlign: "left",
-                overflow: "auto",
-                whiteSpace: "pre-line"
+                overflow: "scroll",
+                whiteSpace: "pre-line",
             }}
             onClick={() => {
                 setEditing(true);
@@ -67,7 +67,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
         >
             {parsedText}
 
-            {links.length > 0 && (
+            {/* {links.length > 0 && (
                 <div
                     style={{
                         position: "absolute",
@@ -105,7 +105,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                         ))}
                     </div>
                 </div>
-            )}
+            )} */}
         </Box>
     );
 };
