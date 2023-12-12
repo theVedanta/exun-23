@@ -51,19 +51,15 @@ export default function Page({ params }: { params: { id: string } }) {
         (!session || !session.user) && (
             <AlertDialog.Root open>
                 <AlertDialog.Content style={{ maxWidth: 450 }}>
-                    <AlertDialog.Title>Revoke access</AlertDialog.Title>
+                    <AlertDialog.Title>Please Log in</AlertDialog.Title>
                     <AlertDialog.Description size="2">
-                        You are not authenticated to access this workspace.{" "}
+                        Please authenticate in order to access this account. The
+                        workspace will be saved in &quot;Your Workspaces&quot;
                         <br />
                         Login and try again.
                     </AlertDialog.Description>
 
                     <Flex gap="3" mt="4" justify="end">
-                        <AlertDialog.Cancel>
-                            <Button variant="soft" color="gray">
-                                Cancel
-                            </Button>
-                        </AlertDialog.Cancel>
                         <AlertDialog.Action>
                             <Button variant="solid" onClick={() => signIn()}>
                                 Login
