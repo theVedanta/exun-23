@@ -7,7 +7,8 @@ import CheckList from "@editorjs/checklist";
 
 // @ts-ignore
 import List from "@editorjs/list";
-// import Quote from "@editorjs/quote";
+// @ts-ignore
+import Quote from "@editorjs/quote";
 // import SimpleImage from "@editorjs/simple-image";
 // import Paragraph from "@editorjs/paragraph";
 
@@ -38,4 +39,5 @@ export const EDITOR_TOOLS = {
     header: Header,
     checklist: CheckList,
     list: List,
+    quote: Quote,
 };

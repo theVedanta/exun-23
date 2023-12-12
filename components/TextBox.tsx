@@ -67,7 +67,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
         >
             {parsedText}
 
-            {/* {links.length > 0 && (
+            {links.length > 0 && (
                 <div
                     style={{
                         position: "absolute",
@@ -105,7 +105,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                         ))}
                     </div>
                 </div>
-            )} */}
+            )}
         </Box>
     );
 };
