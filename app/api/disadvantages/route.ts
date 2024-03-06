@@ -14,7 +14,8 @@ export async function POST(request: Request) {
         });
     }
 
-    prompt += "\n\nSuggest some solutions to all of these issues.";
+    prompt +=
+        "\n\nSuggest 4 solutions to all of these issues (Make sure your responses are clear and concise; about 10-15 words).";
 
     const requestAPI = async () => {
         const response = await fetch(

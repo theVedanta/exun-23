@@ -28,7 +28,6 @@ export default function Editor({
     created,
     setCreated,
     setUser,
-    name,
     title = null,
     idea,
 }: Props) {

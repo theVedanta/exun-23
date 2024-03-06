@@ -1,11 +1,6 @@
 import db from "@/app/db";
 import { getSafeUserEmail } from "@/utils";
-import {
-    BarChartIcon,
-    Cross1Icon,
-    OpenInNewWindowIcon,
-    TextIcon,
-} from "@radix-ui/react-icons";
+import { BarChartIcon, Cross1Icon, TextIcon } from "@radix-ui/react-icons";
 import {
     Avatar,
     Badge,
@@ -42,11 +37,11 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
 
             const data = await res.json();
             if (data.err) {
-                alert("Some error occurred");
+                console.log("error has occur");
             }
             return data.msg;
         } catch (err) {
-            alert("Some error occurred");
+            console.log("error has occur");
         }
     };
 
