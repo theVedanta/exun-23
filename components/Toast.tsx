@@ -11,7 +11,7 @@ const CustomToast = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
 				onOpenChange={setOpen}
 			>
 				<Toast.Title className="ToastTitle">
-					Link has been copied!!
+					Link has been copied
 				</Toast.Title>
 
 				<Toast.Action

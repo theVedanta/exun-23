@@ -65,7 +65,7 @@ const TextBox = ({ editing, text, setEditing, onChange }: any) => {
                 setEditing(true);
             }}
         >
-            {parsedText}
+            {parsedText === "" ? "Enter an agenda to start" : parsedText}
 
             {links.length > 0 && (
                 <div
