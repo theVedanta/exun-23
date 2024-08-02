@@ -88,6 +88,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                         setOpenAlert(true);
                         setBig(false);
                     }}
+                    className="lg:text-base xl:text-lg 2xl:text-xl"
                 >
                     Summarise
                 </Tile>
@@ -106,6 +107,7 @@ const MainPane = ({ workspace }: { workspace: Workspace | undefined }) => {
                         setOpenAlert(true);
                         setBig(true);
                     }}
+                    className="text-base md:text-lg lg:text-xl"
                 >
                     Suggest
                 </Tile>

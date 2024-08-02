@@ -15,8 +15,8 @@ const LeftPane = ({ workspace }: { workspace: Workspace | undefined }) => {
             height="100%"
             px="6"
             py="6"
+            className="lg:w-[30%] xl:w-[25%] 2xl:w-[20%]"
             style={{
-                width: "20%",
                 borderRight: "2px solid black",
                 overflow: "scroll",
                 zIndex: 10,

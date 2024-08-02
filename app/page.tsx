@@ -7,20 +7,21 @@ import db from "./db";
 import { useEffect, useState } from "react";
 import Workspaces from "@/components/Workspaces";
 import { useSession } from "next-auth/react";
-import { Share1Icon } from "@radix-ui/react-icons";
+import { CheckIcon, Share1Icon } from "@radix-ui/react-icons";
 import { useClipboard } from "react-haiku";
 import CursorPresence from "@/components/CursorPresence";
 import { RoomProvider } from "@/liveblocks.config";
-import CustomToast from "@/components/Toast";
 import LeftPane from "@/components/LeftPane";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
     const clipboard = useClipboard({ timeout: 2000 });
     const [workspace, setWorkspace] = useState<Workspace>();
     const { data: session } = useSession();
     const [open, setOpen] = useState(false);
+    const router = useRouter();
 
     const getWorkspace = async () => {
         const id = localStorage.getItem("workspace");
@@ -44,6 +45,21 @@ const Home = () => {
     useEffect(() => {
         getWorkspace();
     }, []);
+
+    useEffect(() => {
+        const checkSize = () => {
+            if (window.innerWidth < 1000) {
+                router.push("/small");
+            }
+        };
+        checkSize();
+
+        window.addEventListener("resize", checkSize);
+
+        return () => {
+            window.removeEventListener("resize", checkSize);
+        };
+    }, [router]);
 
     return (
         <RoomProvider
@@ -78,11 +94,10 @@ const Home = () => {
                         justify="between"
                         align="center"
                         pt="6"
+                        className="lg:left-[33%] xl:left-[28%] 2xl:left-[23%] lg:w-[65%] xl:w-[70%] 2xl:w-[75%]"
                         style={{
                             position: "fixed",
                             top: "0",
-                            left: "23%",
-                            width: "75%",
                         }}
                     >
                         <Heading>
@@ -104,16 +119,17 @@ const Home = () => {
                                         clipboard.copy(
                                             `${process.env.NEXT_PUBLIC_BASE_LINK}/${workspace.id}`
                                         );
+
                                         setOpen(true);
+
+                                        setTimeout(() => setOpen(false), 1000);
                                     }}
                                 >
-                                    <Share1Icon />
+                                    {open ? <CheckIcon /> : <Share1Icon />}
                                 </IconButton>
                             )}
                         </Flex>
                     </Flex>
-
-                    <CustomToast open={open} setOpen={setOpen} />
                 </Box>
             </DndProvider>
         </RoomProvider>

@@ -24,6 +24,7 @@ const Workspaces = () => {
                     where("owner", "==", session.user.email)
                 )
             );
+            
             fetchedWs.forEach((d) =>
                 ws.push({ ...d.data(), id: d.id } as Workspace)
             );
@@ -41,13 +42,11 @@ const Workspaces = () => {
                     ws.push({ ...w.data(), id: w.id } as Workspace)
             );
 
-            console.log(ws);
-
             setWorkspaces(ws);
         };
 
-        session && session.user && getData();
-    }, [session]);
+        session?.user && getData();
+    }, [session?.user]);
 
     return (
         <Dialog.Root>
