@@ -80,9 +80,11 @@ export default function About() {
 
                 <div className="flex w-full justify-center"></div>
 
-                <Button className="bg-indigo-500">
-                    Get Started &nbsp;&nbsp; <OpenInNewWindowIcon />
-                </Button>
+                <Link href="/">
+                    <Button className="bg-indigo-500">
+                        Get Started &nbsp;&nbsp; <OpenInNewWindowIcon />
+                    </Button>
+                </Link>
             </header>
             <main className="flex-1">
                 <section className="w-full py-12 md:py-24 lg:py-32">
